@@ -1,20 +1,13 @@
-// Copyright 2020 GlitchyByte
-// SPDX-License-Identifier: Apache-2.0
-
 package com.glitchybyte.lib;
 
-import com.glitchybyte.lib.mutable.GMutable;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class BuildInfoTest {
+public class GlitchyLibBuildInfoTest {
 
     @Test
-    void canLoadBuildInfo() {
-//        final GMutable<BuildInfo> holder = new GMutable<>();
-//        assertDoesNotThrow(() -> holder.value = BuildInfo.loadFromResource(getClass()));
-//        final BuildInfo buildInfo = holder.value;
+    void hasBuildInfo() {
+//        final BuildInfo buildInfo = GlitchyLibBuildInfo.get();
+//        assertNotNull(buildInfo);
 //        assertNotNull(buildInfo.group);
 //        assertFalse(buildInfo.group.isBlank());
 //        assertNotNull(buildInfo.name);

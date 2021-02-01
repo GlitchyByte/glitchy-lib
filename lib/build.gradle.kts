@@ -1,13 +1,8 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 //import java.util.Locale
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-
-tasks.named<Wrapper>("wrapper") {
-    // Automatically set distribution type all when updating gradlew.
-    distributionType = Wrapper.DistributionType.ALL
-}
 
 plugins {
     `java-library`
@@ -44,6 +39,12 @@ tasks.withType<Test> {
     useJUnitPlatform()
     maxParallelForks = 8
     testLogging.exceptionFormat = TestExceptionFormat.FULL
+}
+
+configurations.all {
+    resolutionStrategy {
+        failOnNonReproducibleResolution()
+    }
 }
 
 dependencies {
@@ -91,7 +92,7 @@ publishing {
 tasks.register<Copy>("exposeJavadoc") {
     dependsOn("javadoc")
     from("$buildDir/docs/javadoc")
-    into("docs")
+    into("$rootDir/docs")
 }
 
 tasks.named("javadoc") {
