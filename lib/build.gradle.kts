@@ -6,9 +6,9 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     `java-library`
+    id("com.glitchybyte.gradle.plugin.buildinfo")
     `maven-publish`
     id("com.google.cloud.artifactregistry.gradle-plugin") version "2.1.1"
-//    id("com.glitchybyte.gradle.plugin.buildinfo") version "1.0.0"
 }
 
 repositories {
@@ -17,13 +17,15 @@ repositories {
     mavenCentral()
 }
 
-//tasks {
-//    saveBuildInfo {
-//        destinations = setOf(
-//            "src/main/resources/com/glitchybyte/lib"
-//        )
-//    }
-//}
+tasks {
+    saveBuildInfo {
+        useRootName = true
+        codeBitXor = 0xb5b0c7e8
+        destinations = setOf(
+            "$projectDir/src/main/resources/com/glitchybyte/lib"
+        )
+    }
+}
 
 java {
     // Java version for the library.
