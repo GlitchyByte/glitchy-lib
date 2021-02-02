@@ -1,7 +1,6 @@
 // Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-//import java.util.Locale
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
@@ -61,6 +60,22 @@ dependencies {
 group = "com.glitchybyte"
 version = "1.0.0"
 
+// Set the name of the artifacts to that of the root project.
+tasks.withType<Jar> {
+    archiveBaseName.set(rootProject.name)
+}
+
+// Expose javadoc for GitHub.
+tasks.register<Copy>("exposeJavadoc") {
+    dependsOn("javadoc")
+    from("$buildDir/docs/javadoc")
+    into("$rootDir/docs")
+}
+
+tasks.named("javadoc") {
+    finalizedBy("exposeJavadoc")
+}
+
 // Publish to Google Cloud Platform Artifact Registry.
 publishing {
     repositories {
@@ -89,14 +104,3 @@ publishing {
 //        }
 //    }
 //}
-
-// Expose javadoc for GitHub.
-tasks.register<Copy>("exposeJavadoc") {
-    dependsOn("javadoc")
-    from("$buildDir/docs/javadoc")
-    into("$rootDir/docs")
-}
-
-tasks.named("javadoc") {
-    finalizedBy("exposeJavadoc")
-}
