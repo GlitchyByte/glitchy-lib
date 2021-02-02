@@ -59,7 +59,7 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte"
-version = "1.0.0"
+version = "0.1.0"
 
 // Set the name of the artifacts to that of the root project.
 tasks.withType<Jar> {
