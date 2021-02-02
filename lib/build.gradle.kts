@@ -1,6 +1,7 @@
 // Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
+import java.util.Locale
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
@@ -11,7 +12,7 @@ plugins {
 }
 
 repositories {
-    maven(url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchy-maven/repo"))
+//    maven(url = uri("artifactregistry://us-maven.pkg.dev/glitchy-maven/repo"))
 //    mavenLocal()
     mavenCentral()
 }
@@ -79,28 +80,28 @@ tasks.named("javadoc") {
 // Publish to Google Cloud Platform Artifact Registry.
 publishing {
     repositories {
-        maven(url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchy-maven/repo"))
+        maven(url = uri("artifactregistry://us-maven.pkg.dev/glitchy-maven/repo"))
     }
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("library") {
-//            groupId = project.group as String
-//            artifactId = project.name.toLowerCase(Locale.US)
-//            version = project.version as String
-//            from(components["java"])
-//            pom {
-//                name.set("Example Library")
-//                description.set("Reusable generic utilities to speed up development.")
-////                url.set("https://github.com/wyvx/base-java-lib-gradle")
-//                licenses {
-//                    license {
-//                        name.set("Apache License 2.0")
-//                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+publishing {
+    publications {
+        create<MavenPublication>("library") {
+            groupId = project.group as String
+            artifactId = rootProject.name.toLowerCase(Locale.US)
+            version = project.version as String
+            from(components["java"])
+            pom {
+                name.set("Glitchy Library")
+                description.set("Various utilities to bootstrap development.")
+                url.set("https://github.com/glitchybyte/glitchy-lib")
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+            }
+        }
+    }
+}
