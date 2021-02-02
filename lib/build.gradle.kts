@@ -59,7 +59,7 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte"
-version = "0.1.0"
+version = "0.1.1"
 
 // Set the name of the artifacts to that of the root project.
 tasks.withType<Jar> {
@@ -67,6 +67,10 @@ tasks.withType<Jar> {
 }
 
 // Expose javadoc for GitHub.
+tasks.withType<Javadoc> {
+    title = "${rootProject.name} (v$version) API"
+}
+
 tasks.register<Copy>("exposeJavadoc") {
     dependsOn("javadoc")
     from("$buildDir/docs/javadoc")
