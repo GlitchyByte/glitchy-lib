@@ -1,4 +1,4 @@
-// Copyright 2020 GlitchyByte LLC
+// Copyright 2020-2021 GlitchyByte LLC
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gradle.plugin.buildinfo
