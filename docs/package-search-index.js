@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.glitchybyte.lib"},{"l":"com.glitchybyte.lib.console"},{"l":"com.glitchybyte.lib.log"},{"l":"com.glitchybyte.lib.mutable"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.glitchybyte.glib"},{"l":"com.glitchybyte.glib.console"},{"l":"com.glitchybyte.glib.log"},{"l":"com.glitchybyte.glib.mutable"}];updateSearchResults();

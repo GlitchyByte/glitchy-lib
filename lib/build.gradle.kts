@@ -22,7 +22,7 @@ tasks {
         useRootName = true
         codeBitXor = 0xb5b0c7e8
         destinations = setOf(
-            "$projectDir/src/main/resources/com/glitchybyte/lib"
+            "$projectDir/src/main/resources/com/glitchybyte/glib"
         )
     }
 }
@@ -58,8 +58,8 @@ dependencies {
 }
 
 // Setup build info.
-group = "com.glitchybyte"
-version = "0.1.1"
+group = "com.glitchybyte.glib"
+version = "0.1.0"
 
 // Set the name of the artifacts to that of the root project.
 tasks.withType<Jar> {

@@ -1,4 +1,4 @@
-com.glitchybyte.lib
-com.glitchybyte.lib.console
-com.glitchybyte.lib.log
-com.glitchybyte.lib.mutable
+com.glitchybyte.glib
+com.glitchybyte.glib.console
+com.glitchybyte.glib.log
+com.glitchybyte.glib.mutable
