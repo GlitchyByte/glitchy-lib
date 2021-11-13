@@ -1,5 +1,8 @@
 # GlitchyLib
 
+Included in this repository is a generic Java library and some scripts that are common to many of my projects.
+
+---
 ## GLib Java library
 
 Various Java utility classes to bootstrap development.
@@ -14,3 +17,10 @@ This is my personal generic library, and is meant to be copied over to a current
 `gen-code` generates a humanly readable code. Unique per project as long as it's used with the same salt. Useful to create watchers or scripts that check for change.
 
     ./gen-code MY_SALT
+
+---
+## Application runner
+
+`run` builds, unpacks, and runs a Gradle project.
+
+    ./run MY_PROJECT [ARG1 ARG2 ...]
