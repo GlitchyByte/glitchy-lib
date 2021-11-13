@@ -2,9 +2,5 @@
 .idea/
 .vscode/
 
-# Gradle.
-.gradle/
-build/
-
-# Gradle plugin generated.
+# Generated build-info file.
 build-info.json
