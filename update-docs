@@ -1,0 +1,34 @@
+#!/bin/sh
+# Copyright 2021 GlitchyByte
+# SPDX-License-Identifier: Apache-2.0
+
+# Update docs for GitHub.
+
+# Capture caller directory and script directory.
+callingDir="$(pwd)"
+scriptDir="$(cd $(dirname "$0") && pwd)"
+
+# Define docs dir.
+docsDir="docs"
+
+# Remove docs directory, if it exists.
+if test -d "$docsDir"; then
+  rm -dr "$docsDir"
+  if test $? -ne 0; then
+    echo "Can't remove '$docsDir'!"
+    exit 1
+  fi
+fi
+
+# Clean, run tests, and generate javadocs.
+cd code || exit 1
+./gradlew clean :glib:test :glib:javadoc
+if test $? -ne 0; then
+  echo "Tests failed!"
+  cd "$callingDir"
+  exit 1
+fi
+
+# Move javadocs to docs directory.
+cd "$callingDir"
+mv code/glib/build/docs/javadoc "$docsDir"
