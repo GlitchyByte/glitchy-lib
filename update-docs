@@ -5,17 +5,17 @@
 # Update docs for GitHub.
 
 # Capture caller directory and script directory.
-callingDir="$(pwd)"
-scriptDir="$(cd $(dirname "$0") && pwd)"
+calling_dir="$(pwd)"
+script_dir="$(cd $(dirname "$0") && pwd)"
 
 # Define docs dir.
-docsDir="docs"
+docs_dir="docs"
 
 # Remove docs directory, if it exists.
-if test -d "$docsDir"; then
-  rm -dr "$docsDir"
+if test -d "$docs_dir"; then
+  rm -dr "$docs_dir"
   if test $? -ne 0; then
-    echo "Can't remove '$docsDir'!"
+    echo "Can't remove '$docs_dir'!"
     exit 1
   fi
 fi
@@ -25,10 +25,10 @@ cd code || exit 1
 ./gradlew clean :glib:test :glib:javadoc
 if test $? -ne 0; then
   echo "Tests failed!"
-  cd "$callingDir"
+  cd "$calling_dir"
   exit 1
 fi
 
 # Move javadocs to docs directory.
-cd "$callingDir"
-mv code/glib/build/docs/javadoc "$docsDir"
+cd "$calling_dir"
+mv code/glib/build/docs/javadoc "$docs_dir"
