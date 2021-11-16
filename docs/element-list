@@ -1,4 +1,5 @@
 com.glitchybyte.glib
+com.glitchybyte.glib.cache
 com.glitchybyte.glib.console
 com.glitchybyte.glib.log
 com.glitchybyte.glib.mutable
