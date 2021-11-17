@@ -32,10 +32,6 @@ if test $? -ne 0; then
   exit 1
 fi
 
-# Get Gradle properties.
-# We did this already for speed. Read above.
-# gradle_properties=$(./gradlew "$project":properties)
-
 # Go back to caller directory.
 cd "$calling_dir" || exit 1
 
