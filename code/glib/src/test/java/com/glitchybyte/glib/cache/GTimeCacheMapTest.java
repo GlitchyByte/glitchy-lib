@@ -55,4 +55,16 @@ public class GTimeCacheMapTest {
         final String output = cache.get("one");
         assertEquals("first", output);
     }
+
+    @Test
+    void entryExpiresAndLaterEntryRemains() {
+        final Map<String, String> cache = new GTimedCacheMap<>(500, ChronoUnit.MILLIS);
+        cache.put("one", "first");
+        delay(300);
+        assertEquals("first", cache.get("one"));
+        cache.put("two", "second");
+        delay(300);
+        assertNull(cache.get("one"));
+        assertEquals("second", cache.get("two"));
+    }
 }
