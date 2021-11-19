@@ -33,7 +33,7 @@ public final class GConsole {
      */
     private static final String CSI = "\u001b[";
 //    private static final String CSI_CLEAR = CSI + "2J";
-    private static final String CSI_CLEAR_CURRENT_LINE = CSI + "K";
+    private static final String CSI_CLEAR_CURRENT_LINE = CSI + "2K";
     private static final String CSI_CLEAR_TO_END_OF_LINE = CSI + "0K";
     private static final String CSI_CLEAR_TO_START_OF_LINE = CSI + "1K";
 //    private static final String CSI_MOVE_TO = CSI + "%d;%df";
