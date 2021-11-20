@@ -1,2 +1,2 @@
 rootProject.name = "glitchy-lib"
-include("glib")
+include("glib", "gspring")

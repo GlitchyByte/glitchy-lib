@@ -22,7 +22,7 @@ fi
 
 # Clean, run tests, and generate javadocs.
 cd code || exit 1
-./gradlew clean :glib:test :glib:javadoc
+./gradlew clean build :glib:test :glib:javadoc
 if test $? -ne 0; then
   echo "Tests failed!"
   cd "$calling_dir"
