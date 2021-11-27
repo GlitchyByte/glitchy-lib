@@ -6,7 +6,7 @@
 
 # Capture caller directory and script directory.
 calling_dir="$(pwd)"
-script_dir="$(cd $(dirname "$0") && pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 # Define docs dir.
 docs_dir="docs"
