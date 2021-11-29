@@ -1,10 +1,10 @@
-// Copyright 2014-2020 GlitchyByte
+// Copyright 2014-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.log;
 
-import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.GObjects;
+import com.glitchybyte.glib.GStrings;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -92,6 +92,15 @@ public final class GLog {
         return logger;
     }
 
+    /**
+     * Resets the default logger.
+     * <p>
+     * Clears the default logger. Next time a log is issued, a new logger is created.
+     */
+    public static void resetLogger() {
+        logger = null;
+    }
+
     private static final Map<String, Logger> extraLoggers = new HashMap<>();
 
     /**
@@ -158,7 +167,6 @@ public final class GLog {
      * @param args Arguments of format.
      */
     public static void finest(final String format, final Object... args) {
-
         log(Level.FINEST, format, args);
     }
 
