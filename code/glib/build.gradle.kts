@@ -34,34 +34,3 @@ version = "1.0.3"
 tasks.named<Javadoc>("javadoc") {
     title = "${rootProject.name} v${version} API"
 }
-
-// ---- Generate build info ----
-
-//import java.io.ByteArrayOutputStream
-//import java.nio.file.Paths
-//import java.nio.file.Files
-//
-//tasks.named<ProcessResources>("processResources") {
-//    dependsOn("generateBuildInfo")
-//}
-//
-//tasks.register("generateBuildInfo") {
-//    val outputStream = ByteArrayOutputStream()
-//    exec {
-//        executable("${rootDir}/../gen-code")
-//        args("${project.group}")
-//        standardOutput = outputStream
-//    }
-//    val buildInfo = """
-//        {
-//            "group": "${project.group}",
-//            "version": "${project.version}",
-//            "code": "${outputStream.toString().trim()}"
-//        }
-//
-//    """.trimIndent()
-//    val path = Paths.get("${projectDir}/src/main/resources/" + "${project.group}".replace('.', '/') + "/build-info.json")
-//    val parentPath = path.parent
-//    Files.createDirectories(parentPath)
-//    path.toFile().writeText(buildInfo)
-//}
