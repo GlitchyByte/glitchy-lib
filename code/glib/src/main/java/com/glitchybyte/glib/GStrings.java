@@ -43,7 +43,7 @@ public final class GStrings {
     }
 
     /**
-     * Convenience replacement for String.format, but it already includes US locale.
+     * Convenience replacement for {@code String.format}, but it already includes US locale.
      *
      * @param format A format string.
      * @param args Arguments for format.
