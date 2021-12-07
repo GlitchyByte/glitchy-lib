@@ -5,6 +5,8 @@ Included in this repository is a generic Java library and some scripts that are 
 ---
 ## GLib Java library
 
+![Version](https://img.shields.io/badge/version-1.1.0-green)
+
 Various Java utility classes to bootstrap development.
 
 [Read the javadocs!](https://glitchybyte.github.io/glitchy-lib/)
