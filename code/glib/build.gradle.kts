@@ -1,4 +1,4 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
@@ -22,14 +22,14 @@ tasks.named<Test>("test") {
 
 dependencies {
     // Main dependencies.
-    api("com.google.code.gson:gson:2.8.9")
+    api("com.google.code.gson:gson:2.9.0")
     // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.1.1"
+version = "1.1.2"
 
 tasks.named<Javadoc>("javadoc") {
     title = "${rootProject.name} v${version} API"

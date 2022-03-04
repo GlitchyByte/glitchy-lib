@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
@@ -16,8 +16,8 @@ java {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-web:2.6.1")
-    api("org.apache.tika:tika-core:2.1.0")
+    api("org.springframework.boot:spring-boot-starter-web:2.6.4")
+    api("org.apache.tika:tika-core:2.3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

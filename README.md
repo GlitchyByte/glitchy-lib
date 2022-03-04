@@ -5,7 +5,7 @@ Included in this repository is a generic Java library and some scripts that are 
 ---
 ## GLib Java library
 
-![Version](https://img.shields.io/badge/version-1.1.1-green)
+![Version](https://img.shields.io/badge/Version-1.1.2-green) ![Java](https://img.shields.io/badge/Java-17-orange)
 
 Various Java utility classes to bootstrap development.
 
@@ -16,6 +16,8 @@ This is my personal generic library, and is meant to be copied over to a current
 ---
 ## GSpring Java library
 
+![Version](https://img.shields.io/badge/Version-1.0.0-green) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.6.4-orange)
+
 This is a new project. Not sure it will stay, but it's here for now. It contains common configurations and setup for Spring Boot Web applications.
 
 *Documentation is non-existent at the moment. I'll add more as it matures.*
@@ -23,7 +25,7 @@ This is a new project. Not sure it will stay, but it's here for now. It contains
 ---
 ## Build code generator
 
-`gen-code` generates a humanly readable code. Unique per project as long as it's used with the same salt. Useful to create watchers or scripts that check for change.
+`gen-code` generates a humanly readable code. Unique every second, per project, as long as it's used with the same salt. Useful to create watchers or scripts that check for change.
 
     ./gen-code MY_SALT
 
