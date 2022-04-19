@@ -16,7 +16,7 @@ java {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-web:2.6.4")
+    api("org.springframework.boot:spring-boot-starter-web:2.6.6")
     api("org.apache.tika:tika-core:2.3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
