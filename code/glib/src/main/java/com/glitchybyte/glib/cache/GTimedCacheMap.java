@@ -46,6 +46,18 @@ public class GTimedCacheMap<K, V> implements Map<K, V> {
         return Instant.now().plus(timeToLive);
     }
 
+    private void removeExpired() {
+        final Instant now = Instant.now();
+        for (final var iterator = timeMap.entrySet().iterator(); iterator.hasNext();) {
+            final var entry = iterator.next();
+            if (entry.getValue().isAfter(now)) {
+                break;
+            }
+            iterator.remove();
+            cacheMap.remove(entry.getKey());
+        }
+    }
+
     @Override
     public int size() {
         removeExpired();
@@ -121,17 +133,5 @@ public class GTimedCacheMap<K, V> implements Map<K, V> {
     public Set<Entry<K, V>> entrySet() {
         removeExpired();
         return cacheMap.entrySet();
-    }
-
-    private void removeExpired() {
-        final Instant now = Instant.now();
-        for (final var iterator = timeMap.entrySet().iterator(); iterator.hasNext();) {
-            final var entry = iterator.next();
-            if (entry.getValue().isAfter(now)) {
-                break;
-            }
-            iterator.remove();
-            cacheMap.remove(entry.getKey());
-        }
     }
 }
