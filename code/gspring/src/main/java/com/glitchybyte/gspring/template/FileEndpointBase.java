@@ -1,11 +1,9 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gspring.template;
 
 import org.apache.tika.Tika;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,9 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Base abstract class for serving local files.
+ */
 public abstract class FileEndpointBase {
 
-    private static final Logger log = LoggerFactory.getLogger(FileEndpointBase.class);
     protected static final CompletableFuture<ResponseEntity<StreamingResponseBody>> NOT_FOUND =
             CompletableFuture.completedFuture(ResponseEntity.notFound().build());
 

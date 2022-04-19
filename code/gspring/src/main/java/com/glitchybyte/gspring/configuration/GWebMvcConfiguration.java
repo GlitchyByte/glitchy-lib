@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gspring.configuration;
@@ -15,6 +15,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
+/**
+ * This class sets up async configuration.
+ */
 public abstract class GWebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private static final Logger log = LoggerFactory.getLogger(GWebMvcConfiguration.class);

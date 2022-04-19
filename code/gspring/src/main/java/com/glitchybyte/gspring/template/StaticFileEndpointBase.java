@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gspring.template;
@@ -19,7 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
+/**
+ * Abstract endpoint to serve local files.
+ * This endpoint assumes files will not be added to or removed from the root being served.
+ */
 public abstract class StaticFileEndpointBase extends FileEndpointBase {
 
     private static final Logger log = LoggerFactory.getLogger(StaticFileEndpointBase.class);
@@ -37,13 +42,17 @@ public abstract class StaticFileEndpointBase extends FileEndpointBase {
         super(baseUri, sourceRootPath, CacheControl.maxAge(maxAge));
         List<Path> newDirectories = new ArrayList<>();
         try {
-            Files.list(sourceRootPath).forEach(newDirectories::add);
+            try (final Stream<Path> stream = Files.list(sourceRootPath)) {
+                stream.forEach(newDirectories::add);
+            }
             do {
                 final List<Path> working = newDirectories;
                 newDirectories = new ArrayList<>();
                 for (final Path path : working) {
                     if (Files.isDirectory(path)) {
-                        Files.list(path).forEach(newDirectories::add);
+                        try (final Stream<Path> stream = Files.list(path)) {
+                            stream.forEach(newDirectories::add);
+                        }
                         continue;
                     }
                     if (!Files.isRegularFile(path)) {

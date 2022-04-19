@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gspring.template;
@@ -14,6 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Abstract endpoint to serve local files.
+ * This endpoint assumes files can be added to or removed from the root being served.
+ * If files are not going to change it is more efficient to use {@link StaticFileEndpointBase}.
+ */
 public abstract class DynamicFileEndpointBase extends FileEndpointBase {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicFileEndpointBase.class);

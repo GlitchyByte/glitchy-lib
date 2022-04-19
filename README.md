@@ -16,11 +16,9 @@ This is my personal generic library, and is meant to be copied over to a current
 ---
 ## GSpring Java library
 
-![Version](https://img.shields.io/badge/Version-1.0.0-green) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.6.4-orange)
+![Version](https://img.shields.io/badge/Version-1.0.0-green) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.6.6-orange)
 
-This is a new project. Not sure it will stay, but it's here for now. It contains common configurations and setup for Spring Boot Web applications.
-
-*Documentation is non-existent at the moment. I'll add more as it matures.*
+This is a library for common Spring Boot Web applications. It contains basic configurations, setup, file server endpoints, and common utils.
 
 ---
 ## Build code generator

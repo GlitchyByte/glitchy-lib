@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gspring.configuration;
@@ -12,6 +12,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
+/**
+ * This class provides async configuration.
+ */
 public abstract class GAsyncConfiguration implements AsyncConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(GAsyncConfiguration.class);
