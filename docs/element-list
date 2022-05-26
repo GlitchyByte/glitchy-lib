@@ -1,5 +1,6 @@
 com.glitchybyte.glib
 com.glitchybyte.glib.cache
+com.glitchybyte.glib.combinatorics
 com.glitchybyte.glib.console
 com.glitchybyte.glib.json
 com.glitchybyte.glib.log
