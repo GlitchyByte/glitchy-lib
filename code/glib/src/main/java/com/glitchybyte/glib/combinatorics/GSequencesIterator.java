@@ -19,6 +19,11 @@ public final class GSequencesIterator<TCodedGenerator extends GCodedSequencesGen
     private final Iterator<int[]> codedIterator;
     private final TItem[] items;
 
+    /**
+     * Creates an iterator of item sequences.
+     *
+     * @param generator Item sequences generator.
+     */
     public GSequencesIterator(final GSequencesGenerator<TCodedGenerator, TItem> generator) {
         codedIterator = generator.codedGenerator.iterator();
         items = generator.items;
