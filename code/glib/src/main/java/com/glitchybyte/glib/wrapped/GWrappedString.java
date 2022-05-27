@@ -8,10 +8,18 @@ package com.glitchybyte.glib.wrapped;
  */
 public class GWrappedString extends GWrappedObject<String> {
 
+    /**
+     * Constructs a wrapper.
+     *
+     * @param value Initial value.
+     */
     public GWrappedString(final String value) {
         super(value);
     }
 
+    /**
+     * Constructs a wrapper with an initial value of null.
+     */
     public GWrappedString() {
         super();
     }

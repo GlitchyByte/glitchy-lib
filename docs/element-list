@@ -2,6 +2,7 @@ com.glitchybyte.glib
 com.glitchybyte.glib.cache
 com.glitchybyte.glib.combinatorics
 com.glitchybyte.glib.console
+com.glitchybyte.glib.function
 com.glitchybyte.glib.json
 com.glitchybyte.glib.log
-com.glitchybyte.glib.mutable
+com.glitchybyte.glib.wrapped
