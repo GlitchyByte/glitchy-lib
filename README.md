@@ -1,17 +1,17 @@
 # GlitchyLib
 
-Included in this repository is a generic Java library and some scripts that are common to many of my projects.
+Included in this repository is a general purpose Java library and some scripts that are common to many of my projects.
 
 ---
 ## GLib Java library
 
-![Version](https://img.shields.io/badge/Version-1.2.1-green) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-1.2.2-green) ![Java](https://img.shields.io/badge/Java-17-orange)
 
 Various Java utility classes to bootstrap development.
 
 [Read the javadocs!](https://glitchybyte.github.io/glitchy-lib/)
 
-This is my personal generic library, and is meant to be copied over to a current project and expanded as the need arises. Then it's copied back, tests added, and it's ready for the next project. It used to be published, but that meant it was rarely updated.
+This is my personal general purpose library. It is meant to be copied over to a current project and expanded as the need arises. Then it's copied back, tests added, and it's ready for the next project. It used to be published, but that meant it was rarely updated.
 
 ---
 ## GSpring Java library
