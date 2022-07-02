@@ -15,15 +15,22 @@ java {
     }
 }
 
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter("5.8.2")
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+}
+
 dependencies {
     api("org.springframework.boot:spring-boot-starter-web:2.7.0")
     api("org.apache.tika:tika-core:2.4.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.0")
-}
-
-tasks.test {
-    useJUnitPlatform()
-    maxParallelForks = 4
 }
 
 // Setup build info.

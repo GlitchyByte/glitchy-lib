@@ -5,7 +5,7 @@ Included in this repository is a general purpose Java library and some scripts t
 ---
 ## GLib Java library
 
-![Version](https://img.shields.io/badge/Version-1.2.2-green) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-1.2.2-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
 
 Various Java utility classes to bootstrap development.
 
@@ -16,7 +16,7 @@ This is my personal general purpose library. It is meant to be copied over to a 
 ---
 ## GSpring Java library
 
-![Version](https://img.shields.io/badge/Version-1.0.1-green) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.7.0-orange)
+![Version](https://img.shields.io/badge/Version-1.0.1-blue) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.7.0-orange)
 
 This is a library for common Spring Boot Web applications. It contains basic configurations, setup, file server endpoints, and common utils for APIs.
 
