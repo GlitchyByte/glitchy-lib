@@ -5,7 +5,7 @@ Included in this repository is a general purpose Java library and some scripts t
 ---
 ## GLib Java library
 
-![Version](https://img.shields.io/badge/Version-1.2.2-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-1.2.3-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
 
 Various Java utility classes to bootstrap development.
 
