@@ -49,6 +49,7 @@ tasks.register<Jar>("standalone").configure {
         attributes(mapOf("Main-Class" to application.mainClass))
     }
 //    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    isPreserveFileTimestamps = false
     from(sourceSets.main.get().output)
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
