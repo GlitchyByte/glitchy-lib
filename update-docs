@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2021 GlitchyByte
+# Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: Apache-2.0
 
 # Update docs for GitHub.
@@ -22,7 +22,7 @@ fi
 
 # Clean, run tests, and generate javadocs.
 cd code || exit 1
-./gradlew clean build :glib:test :glib:javadoc
+./gradlew :glib:clean :glib:build :glib:javadoc
 if test $? -ne 0; then
   echo "Tests failed!"
   cd "$calling_dir"

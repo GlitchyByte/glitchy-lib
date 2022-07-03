@@ -1,0 +1,22 @@
+#!/bin/sh
+# Copyright 2022 GlitchyByte
+# SPDX-License-Identifier: Apache-2.0
+
+# Makes run jar and completes wrapper.
+
+# Capture caller directory and script directory.
+calling_dir="$(pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+# Build gpx.
+cd code || exit 1
+./gradlew :gpx:clean :gpx:standalone
+if test $? -ne 0; then
+  echo "Tests failed!"
+  cd "$calling_dir"
+  exit 1
+fi
+
+# Copy jar.
+cd "$calling_dir"
+cp code/gpx/build/libs/gpx.jar run/

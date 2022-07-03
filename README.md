@@ -30,6 +30,18 @@ This is a library for common Spring Boot Web applications. It contains basic con
 ---
 ## Application runner
 
-`run` builds, unpacks, and runs a Gradle project.
+![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
 
-    ./run MY_PROJECT [ARG1 ARG2 ...]
+Builds, unpacks, and runs a Gradle project on the actual shell, as opposed to the Gradle run task which doesn't attach a proper console.
+
+Though particular to my project directory structures, it could be easily modified to suit other needs. This runner works on macOS, Linux, and Windows.
+
+To use, copy the `run` directory to the root of the project (in my case the directory containing the `code` directory).
+
+### macOS or Linux:
+
+    run/run MY_PROJECT [ARG1 ARG2 ...]
+
+### Windows:
+
+    run\run.bat MY_PROJECT [ARG1 ARG2 ...]
