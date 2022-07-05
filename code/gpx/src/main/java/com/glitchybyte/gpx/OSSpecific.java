@@ -18,7 +18,7 @@ public abstract class OSSpecific {
         return osName.contains("windows");
     }
 
-    public abstract Path getResolvedDir(final String dir);
+    public abstract Path resolvedDir(final String dir);
 
     public List<String> execute(final String command, final Path dir) {
         final ProcessBuilder pb = new ProcessBuilder()

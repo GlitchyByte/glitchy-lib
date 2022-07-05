@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-public class App implements Callable<Integer> {
+public final class App implements Callable<Integer> {
 
     private static OSSpecific osSpecific;
 
@@ -23,7 +23,7 @@ public class App implements Callable<Integer> {
             System.exit(1);
         }
         osSpecific = OSSpecific.isWindowsOS() ? new WindowsSpecific() : new LinuxSpecific();
-        final Path dir = osSpecific.getResolvedDir(args[0]);
+        final Path dir = osSpecific.resolvedDir(args[0]);
         final String projectName = args[1].charAt(0) == ':' ? args[1] : ":" + args[1];
         final App app = new App(dir, projectName);
         final int exitCode = app.call();

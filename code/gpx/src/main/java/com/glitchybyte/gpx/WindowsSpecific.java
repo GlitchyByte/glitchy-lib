@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public final class WindowsSpecific extends OSSpecific{
 
     @Override
-    public Path getResolvedDir(final String dir) {
+    public Path resolvedDir(final String dir) {
         if (dir.equals("~")) {
             return Paths.get(System.getProperty("user.home")).resolve(dir.substring(1)).normalize();
         }
