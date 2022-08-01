@@ -28,11 +28,11 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-web:2.7.0")
-    api("org.apache.tika:tika-core:2.4.0")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.0")
+    api("org.springframework.boot:spring-boot-starter-web:2.7.2")
+    api("org.apache.tika:tika-core:2.4.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.2")
 }
 
 // Setup build info.
 group = "com.glitchybyte.gspring"
-version = "1.0.1"
+version = "1.0.2"
