@@ -3,11 +3,15 @@
 
 package com.glitchybyte.gpx;
 
+import com.glitchybyte.glib.process.GOSInterface;
+import com.glitchybyte.glib.process.GOSType;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -15,15 +19,12 @@ import java.util.concurrent.Callable;
 
 public final class App implements Callable<Integer> {
 
-    private static OSSpecific osSpecific;
-
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.out.println("gpx <GRADLE_ROOT_DIR> <GRADLE_PROJECT>");
             System.exit(1);
         }
-        osSpecific = OSSpecific.isWindowsOS() ? new WindowsSpecific() : new LinuxSpecific();
-        final Path dir = osSpecific.resolvedDir(args[0]);
+        final Path dir = GOSInterface.instance.resolvedDir(args[0]);
         final String projectName = args[1].charAt(0) == ':' ? args[1] : ":" + args[1];
         final App app = new App(dir, projectName);
         final int exitCode = app.call();
@@ -72,12 +73,15 @@ public final class App implements Callable<Integer> {
             System.err.println("Distribution not found: " + tarPath);
             return 2;
         }
-        final Path workDir = Paths.get(buildDir, distsDirName, tarName.substring(0, tarName.length() - 4));
+        final Path workDir = distDir.resolve(tarName.substring(0, tarName.length() - 4));
         deleteDir(workDir);
-        osSpecific.execute("tar -xf " + tarPath, distDir);
+        GOSInterface.instance.execute(new String[] { "tar", "-xf", tarName }, distDir);
         // Exit.
         final Path binPath = workDir.resolve("bin").resolve(applicationName);
-        System.out.printf(Locale.US, "%s%s%n", binPath, OSSpecific.isWindowsOS() ? ".bat" : "");
+        System.out.printf(Locale.US, "%s%s%n",
+                binPath,
+                GOSInterface.instance.osType == GOSType.WINDOWS ? ".bat" : ""
+        );
         return 0;
     }
 
@@ -91,12 +95,18 @@ public final class App implements Callable<Integer> {
     }
 
     private void printPropertyNotFound(final String name) {
-        System.err.printf(Locale.US, "Property '%s' not found!", name);
+        System.err.printf(Locale.US, "Property '%s' not found!%n", name);
     }
 
     private List<String> gradleBuildAndGetProperties() {
-        final String gradleArgs = String.format(Locale.US, "%1$s:build %1$s:properties", projectName);
-        return osSpecific.executeGradle(gradleArgs, gradleRootDir);
+        final String gradleCommand = String.format(Locale.US, "%1$s %2$s:build %2$s:properties",
+                GOSInterface.instance.osType == GOSType.WINDOWS ? "gradlew.bat" : "./gradlew",
+                projectName
+        );
+        final String[] command = GOSInterface.instance.getShellCommand(gradleCommand);
+        final List<String> output = new ArrayList<>();
+        final Integer exitCode = GOSInterface.instance.execute(command, gradleRootDir, output);
+        return GOSInterface.instance.isSuccessfulExitCode(exitCode) ? output : null;
     }
 
     private String getPropertyValue(final List<String> properties, final String key) {
