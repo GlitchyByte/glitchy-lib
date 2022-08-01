@@ -33,15 +33,13 @@ public final class GObjects {
      *
      * @param obj Object to wait on.
      * @param timeoutMillis Timeout in milliseconds, or zero to wait forever.
+     *
+     * @throws InterruptedException If thread is interrupted.
      */
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public static void hold(final Object obj, final long timeoutMillis) {
+    public static void hold(final Object obj, final long timeoutMillis) throws InterruptedException {
         synchronized (obj) {
-            try {
-                obj.wait(timeoutMillis);
-            } catch (final InterruptedException e) {
-                // No-op.
-            }
+            obj.wait(timeoutMillis);
         }
     }
 
@@ -49,8 +47,10 @@ public final class GObjects {
      * Waits forever on an object to be notified or interrupted.
      *
      * @param obj Object to wait on.
+     *
+     * @throws InterruptedException If thread is interrupted.
      */
-    public static void hold(final Object obj) {
+    public static void hold(final Object obj) throws InterruptedException {
         hold(obj, 0);
     }
 
@@ -81,7 +81,8 @@ public final class GObjects {
      * @return True if the condition is satisfied, false if time ran out.
      * @throws InterruptedException If thread is interrupted.
      */
-    public static boolean waitWithCondition(final Object obj, final long timeoutMillis, final BooleanSupplier endCondition) throws InterruptedException {
+    public static boolean waitWithCondition(final Object obj, final long timeoutMillis, final BooleanSupplier endCondition)
+            throws InterruptedException {
         if (timeoutMillis == 0) {
             waitWithCondition(obj, endCondition);
             return true;

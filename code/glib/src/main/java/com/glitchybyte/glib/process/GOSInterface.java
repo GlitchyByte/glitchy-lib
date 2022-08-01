@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Singleton instance of an OS interface. The instance will be applicable to the currently running OS.
@@ -27,12 +26,12 @@ public abstract class GOSInterface {
     public static final GOSInterface instance = createInstance();
 
     private static GOSInterface createInstance() {
-        return isWindowsOS() ? new GOSWindows() : new GOSLinux();
-    }
-
-    private static boolean isWindowsOS() {
-        final String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.contains("windows");
+        final GOSType osType = GOSType.getType(System.getProperty("os.name"));
+        return switch (osType) {
+            case LINUX, MAC_OS -> new GOSLinux();
+            case WINDOWS -> new GOSWindows();
+            case UNKNOWN -> new GOSUnknown();
+        };
     }
 
     /**
@@ -41,7 +40,21 @@ public abstract class GOSInterface {
     public static final Signal SIGINT = new Signal("INT");
 
     /**
-     * Resolves a directory just like {@code Path} would, except it will resolve ~ to the user home directory on
+     * OS type.
+     */
+    public final GOSType osType;
+
+    /**
+     * Creates OS interface for the given OS type.
+     *
+     * @param osType OS type from which we want to create an interface.
+     */
+    protected GOSInterface(final GOSType osType) {
+        this.osType = osType;
+    }
+
+    /**
+     * Resolves a directory, just like {@code Path} would, except it will resolve ~ to the user home directory on
      * all platforms.
      *
      * @param dir Directory to convert to a {@code Path}.
@@ -72,10 +85,11 @@ public abstract class GOSInterface {
     /**
      * Returns a command array ready to call the shell with the given script.
      *
-     * @param command Command string.
+     * @param command Shell command with args.
+     *
      * @return A new command string.
      */
-    public abstract String[] getShellCommand(final String[] command);
+    public abstract String[] getShellCommand(final String command);
 
     /**
      * Creates a process builder.

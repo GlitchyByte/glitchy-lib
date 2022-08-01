@@ -84,7 +84,11 @@ public final class GShutdownMonitor {
         if (shouldShutdown()) {
             return;
         }
-        GObjects.hold(this, timeoutMillis);
+        try {
+            GObjects.hold(this, timeoutMillis);
+        } catch (final InterruptedException e) {
+            shutdown();
+        }
     }
 
     /**

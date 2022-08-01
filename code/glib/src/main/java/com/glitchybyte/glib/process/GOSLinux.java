@@ -13,6 +13,13 @@ import java.nio.file.Paths;
  */
 public final class GOSLinux extends GOSInterface {
 
+    /**
+     * Creates a Linux OS interface.
+     */
+    public GOSLinux() {
+        super(GOSType.LINUX);
+    }
+
     @Override
     public Path resolvedDir(final String dir) {
         if (dir.equals("~")) {
@@ -25,12 +32,12 @@ public final class GOSLinux extends GOSInterface {
     }
 
     @Override
-    public String[] getShellCommand(final String[] command) {
-        final String[] shellCommand = new String[command.length + 2];
-        shellCommand[0] = "sh";
-        shellCommand[1] = "-c";
-        System.arraycopy(command, 0, shellCommand, 2, command.length);
-        return shellCommand;
+    public String[] getShellCommand(final String command) {
+        return new String[] {
+                "sh",
+                "-c",
+                command
+        };
     }
 
     @Override

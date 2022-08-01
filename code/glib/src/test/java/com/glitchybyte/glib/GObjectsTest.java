@@ -57,7 +57,7 @@ public class GObjectsTest {
 
     @Test
     @Order(1)
-    void willWaitABit() {
+    void willWaitABit() throws InterruptedException {
         final long startTime = System.currentTimeMillis();
         final Object obj = new Object();
         GObjects.hold(obj, 300);
@@ -67,10 +67,14 @@ public class GObjectsTest {
 
     @Test
     @Order(2)
-    void willWaitForever() {
+    void willWaitForever() throws InterruptedException {
         final Thread thread = new Thread(() -> {
             final Object obj = new Object();
-            GObjects.hold(obj);
+            try {
+                GObjects.hold(obj);
+            } catch (final InterruptedException e) {
+                // No-op.
+            }
         });
         thread.start();
         final Object waiter = new Object();

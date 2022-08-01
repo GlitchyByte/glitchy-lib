@@ -123,10 +123,7 @@ public final class GProcess implements Callable<Integer> {
     @Override
     public Integer call() {
         synchronized (this) {
-            final ProcessBuilder pb = GOSInterface.instance.createProcessBuilder(
-                    GOSInterface.instance.getShellCommand(command),
-                    dir
-            );
+            final ProcessBuilder pb = GOSInterface.instance.createProcessBuilder(command, dir);
             try {
                 process = pb.start();
             } catch (final IOException e) {

@@ -14,6 +14,13 @@ import java.util.function.BiFunction;
  */
 public final class GOSWindows extends GOSInterface {
 
+    /**
+     * Creates a Windows OS interface.
+     */
+    public GOSWindows() {
+        super(GOSType.WINDOWS);
+    }
+
     @Override
     public Path resolvedDir(final String dir) {
         if (dir.equals("~")) {
@@ -26,12 +33,12 @@ public final class GOSWindows extends GOSInterface {
     }
 
     @Override
-    public String[] getShellCommand(final String[] command) {
-        final String[] shellCommand = new String[command.length + 2];
-        shellCommand[0] = "cmd.exe";
-        shellCommand[1] = "/c";
-        System.arraycopy(command, 0, shellCommand, 2, command.length);
-        return shellCommand;
+    public String[] getShellCommand(final String command) {
+        return new String[] {
+                "cmd.exe",
+                "/c",
+                command
+        };
     }
 
     @Override
