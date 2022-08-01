@@ -5,4 +5,5 @@ com.glitchybyte.glib.console
 com.glitchybyte.glib.function
 com.glitchybyte.glib.json
 com.glitchybyte.glib.log
+com.glitchybyte.glib.process
 com.glitchybyte.glib.wrapped
