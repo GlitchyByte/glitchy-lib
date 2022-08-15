@@ -1,11 +1,12 @@
 # GlitchyLib
+![Java](https://img.shields.io/badge/Java-18-orange)
 
 Included in this repository is a general purpose Java library and some scripts that are common to many of my projects.
 
 ---
 ## GLib Java library
 
-![Version](https://img.shields.io/badge/Version-1.3.0-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-1.3.0-blue)
 
 Various Java utility classes to bootstrap development.
 
@@ -16,7 +17,7 @@ This is my personal general purpose library. It is meant to be copied over to a 
 ---
 ## GSpring Java library
 
-![Version](https://img.shields.io/badge/Version-1.0.2-blue) ![Java](https://img.shields.io/badge/Java-17-orange) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.7.2-orange)
+![Version](https://img.shields.io/badge/Version-1.0.2-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.7.2-orange)
 
 This is a library for common Spring Boot Web applications. It contains basic configurations, setup, file server endpoints, and common utils for APIs.
 
@@ -30,7 +31,7 @@ This is a library for common Spring Boot Web applications. It contains basic con
 ---
 ## Application runner
 
-![Version](https://img.shields.io/badge/Version-1.1.0-blue) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-1.1.0-blue)
 
 Builds, unpacks, and runs a Gradle project on the actual shell, as opposed to the Gradle run task which doesn't attach a proper console.
 
