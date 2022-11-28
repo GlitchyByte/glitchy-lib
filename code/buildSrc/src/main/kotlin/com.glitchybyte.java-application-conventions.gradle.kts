@@ -3,5 +3,5 @@
 
 plugins {
     id("com.glitchybyte.java-common-conventions")
-    application
+    id("application")
 }

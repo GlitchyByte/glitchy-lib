@@ -3,5 +3,5 @@
 
 plugins {
     id("com.glitchybyte.java-common-conventions")
-    `java-library`
+    id("java-library")
 }
