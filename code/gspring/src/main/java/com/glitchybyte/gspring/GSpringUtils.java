@@ -115,8 +115,7 @@ public final class GSpringUtils {
      * @return The MediaType of the document.
      */
     public static MediaType getMediaType(final String name, final String contents) {
-        final String mimeType = TIKA.detect(contents.getBytes(StandardCharsets.UTF_8), name);
-        return MediaType.parseMediaType(mimeType);
+        return getMediaType(name, contents.getBytes(StandardCharsets.UTF_8));
     }
 
     private GSpringUtils() {

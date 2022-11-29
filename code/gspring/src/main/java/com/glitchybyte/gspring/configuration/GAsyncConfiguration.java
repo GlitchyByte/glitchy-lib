@@ -14,6 +14,26 @@ import java.util.concurrent.Executor;
 
 /**
  * This class provides async configuration.
+ *
+ * <p>At a minimum have this class in your configuration:
+ *
+ * {@snippet :
+ *     @Configuration
+ *     @EnableAsync
+ *     public class AsyncConfiguration extends GAsyncConfiguration {
+ *
+ *         @Override
+ *         @Bean(name = TASK_EXECUTOR_DEFAULT)
+ *         public Executor getAsyncExecutor() {
+ *             return super.getAsyncExecutor();
+ *         }
+ *
+ *         @Bean(name = TASK_EXECUTOR_CONTROLLER)
+ *         public Executor getControllerAsyncExecutor() {
+ *             return super.getControllerAsyncExecutor();
+ *         }
+ *     }
+ * }
  */
 public abstract class GAsyncConfiguration implements AsyncConfigurer {
 

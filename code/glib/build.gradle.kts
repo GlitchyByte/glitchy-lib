@@ -8,12 +8,12 @@ plugins {
 
 publishing {
     publications {
-        create<MavenPublication>("gLib") {
+        create<MavenPublication>("GLib") {
             from(components["java"])
             pom {
-                name.set("Glitchy Library")
-                description.set("Various utilities to bootstrap development.")
-                url.set("https://github.com/glitchybyte/glitchy-lib")
+                name.set("GLib")
+                description.set("General classes and utilities for development.")
+                url.set("https://github.com/glitchybyte/glitchy-kit")
                 licenses {
                     license {
                         name.set("Apache License, Version 2.0")
@@ -26,7 +26,7 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["gLib"])
+    sign(publishing.publications["GLib"])
 }
 
 dependencies {

@@ -17,6 +17,19 @@ import java.util.concurrent.Executor;
 
 /**
  * This class sets up async configuration.
+ *
+ * <p>At a minimum have this class in your configuration:
+ *
+ * {@snippet :
+ *     @Configuration
+ *     public class WebMvcConfiguration extends GWebMvcConfiguration {
+ *
+ *         @Autowired
+ *         protected WebMvcConfiguration(final Executor taskExecutor) {
+ *             super(taskExecutor);
+ *         }
+ *     }
+ * }
  */
 public abstract class GWebMvcConfiguration extends WebMvcConfigurationSupport {
 
