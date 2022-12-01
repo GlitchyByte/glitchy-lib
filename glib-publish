@@ -13,8 +13,10 @@ cd "${script_dir}"
 . ./gscript
 
 # [Main]
+project="glib"
+
 # Define docs dir.
-docs_dir="${script_dir}/docs/glib"
+docs_dir="${script_dir}/docs/${project}"
 
 # Remove docs directory, if it exists.
 if test -d "$docs_dir"; then
@@ -26,17 +28,17 @@ if test -d "$docs_dir"; then
   fi
 fi
 
-# Clean, build, run tests, and generate javadocs.
+# Clean, build, run tests, generate javadocs, and publish artifact to public Google Cloud.
 cd "${script_dir}/code"
-./gradlew :glib:clean :glib:build :glib:javadoc :glib:publishGLibPublicationToGCloudRepository
+./gradlew :${project}:clean :${project}:build :${project}:javadoc :${project}:publishGLibPublicationToGCloudRepository
 if test $? -ne 0; then
-  echoerr "Build failed!"
+  echoerr "Failure!"
   cd "$calling_dir"
   exit 1
 fi
 
 # Move javadocs to docs directory.
-javadoc_dir="${script_dir}/code/glib/build/docs/javadoc"
+javadoc_dir="${script_dir}/code/${project}/build/docs/javadoc"
 mv "${javadoc_dir}" "${docs_dir}"
 
 # Replace fonts.

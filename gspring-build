@@ -2,7 +2,7 @@
 # Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
-# Builds glib.
+# Builds gspring.
 
 # [Setup]
 # Capture caller directory and script directory.
@@ -13,7 +13,7 @@ cd "${script_dir}"
 . ./gscript
 
 # [Main]
-project="glib"
+project="gspring"
 
 # Define docs dir.
 docs_dir="${script_dir}/docs/${project}"

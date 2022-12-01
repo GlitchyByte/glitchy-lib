@@ -2,7 +2,7 @@
 # Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
-# Builds glib.
+# Publishes gspring.
 
 # [Setup]
 # Capture caller directory and script directory.
@@ -13,7 +13,7 @@ cd "${script_dir}"
 . ./gscript
 
 # [Main]
-project="glib"
+project="gspring"
 
 # Define docs dir.
 docs_dir="${script_dir}/docs/${project}"
@@ -28,9 +28,9 @@ if test -d "$docs_dir"; then
   fi
 fi
 
-# Clean, build, run tests, and generate javadocs.
+# Clean, build, run tests, generate javadocs, and publish artifact to public Google Cloud.
 cd "${script_dir}/code"
-./gradlew :${project}:clean :${project}:build :${project}:javadoc
+./gradlew :${project}:clean :${project}:build :${project}:javadoc :${project}:publishGSpringPublicationToGCloudRepository
 if test $? -ne 0; then
   echoerr "Failure!"
   cd "$calling_dir"
