@@ -1,4 +1,4 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.log;
@@ -14,7 +14,14 @@ import java.time.Instant;
  */
 public final class GTimer {
 
-    private final Instant startTime = Instant.now();
+    private final Instant startTime;
+
+    /**
+     * Creates a timer that starts right now!
+     */
+    public GTimer() {
+        startTime = Instant.now();
+    }
 
     /**
      * Logs current elapsed time and a message.
