@@ -1,0 +1,31 @@
+#!/bin/sh
+# Copyright 2022 GlitchyByte
+# SPDX-License-Identifier: MIT-0
+
+# Makes run jar and completes wrapper.
+
+# [Setup]
+# Capture caller directory and script directory.
+calling_dir="$(pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# Go to script directory and load utilities.
+cd "${script_dir}"
+. ./gscript
+
+# [Main]
+project="gpx"
+
+# Clean, build, and run tests.
+cd "${script_dir}/code"
+./gradlew :${project}:clean :${project}:build
+if test $? -ne 0; then
+  echoerr "Failure!"
+  cd "$calling_dir"
+  exit 1
+fi
+
+# Copy jar.
+cd "${script_dir}"
+cp code/gpx/build/libs/gpx.jar artifacts/run/
+
+cd "${calling_dir}"
