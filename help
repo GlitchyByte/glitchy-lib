@@ -1,0 +1,30 @@
+#!/bin/sh
+# Copyright 2022 GlitchyByte
+# SPDX-License-Identifier: MIT-0
+
+# Prints scripts description.
+
+# [Setup]
+# Capture caller directory and script directory.
+calling_dir="$(pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# Go to script directory and load utilities.
+cd "${script_dir}"
+. ./gscript
+
+# [Main]
+cd "${script_dir}"
+
+echo "${cc_title}  ----[ glib ]----  ${c_reset}"
+echo "${cc_item}    glib-build${cc_description}   Builds glib and generates javadocs.${c_reset}"
+echo "${cc_item}    glib-publish${cc_description} Publishes glib artifact to public repository.${c_reset}"
+
+echo "${cc_title}  ----[ gspring ]----  ${c_reset}"
+echo "${cc_item}    gspring-build${cc_description}   Builds gspring and generates javadocs.${c_reset}"
+echo "${cc_item}    gspring-publish${cc_description} Publishes gspring artifact to public repository.${c_reset}"
+
+echo "${cc_title}  ----[ gpx ]----  ${c_reset}"
+echo "${cc_item}    gpx-build${cc_description} Builds gpx.${c_reset}"
+echo "${cc_item}    gpx-make${cc_description}  Makes ${cc_highlight}run${cc_description} artifact.${c_reset}"
+
+cd "${calling_dir}"

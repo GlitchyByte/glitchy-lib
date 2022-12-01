@@ -1,0 +1,49 @@
+#!/bin/sh
+# Copyright 2021-2022 GlitchyByte
+# SPDX-License-Identifier: MIT-0
+
+# Builds glib.
+
+# [Setup]
+# Capture caller directory and script directory.
+calling_dir="$(pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# Go to script directory and load utilities.
+cd "${script_dir}"
+. ./gscript
+
+# [Main]
+# Define docs dir.
+docs_dir="${script_dir}/docs/glib"
+
+# Remove docs directory, if it exists.
+if test -d "$docs_dir"; then
+  rm -dr "$docs_dir"
+  if test $? -ne 0; then
+    echoerr "Can't remove '$docs_dir'!"
+    cd "$calling_dir"
+    exit 1
+  fi
+fi
+
+# Clean, build, run tests, and generate javadocs.
+cd "${script_dir}/code"
+./gradlew :glib:clean :glib:build :glib:javadoc
+if test $? -ne 0; then
+  echoerr "Build failed!"
+  cd "$calling_dir"
+  exit 1
+fi
+
+# Move javadocs to docs directory.
+javadoc_dir="${script_dir}/code/glib/build/docs/javadoc"
+mv "${javadoc_dir}" "${docs_dir}"
+
+# Replace fonts.
+sed -i"" -E \
+  -e "s|^@import url\(.*\);|@import url('https://fonts.googleapis.com/css2?family=Exo+2\&family=JetBrains+Mono\&display=swap');|" \
+  -e "s/'DejaVu (Sans|Serif)'/'Exo 2'/" \
+  -e "s/'DejaVu Sans Mono'/'JetBrains Mono'/" \
+  "${docs_dir}/stylesheet.css"
+
+cd "${calling_dir}"

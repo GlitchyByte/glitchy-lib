@@ -12,7 +12,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set("GLib")
-                description.set("General classes and utilities for development.")
+                description.set("Classes and utilities for general development.")
                 url.set("https://github.com/glitchybyte/glitchy-kit")
                 licenses {
                     license {
