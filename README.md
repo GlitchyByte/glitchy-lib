@@ -1,48 +1,86 @@
-# GlitchyLib
-![Java](https://img.shields.io/badge/Java-18-orange)
+# Glitchy Kit
 
-Included in this repository is a general purpose Java library and some scripts that are common to many of my projects.
+Included in this repository are libraries and utilities common to many of my projects.
+
+This is a way of keeping my dependencies updated in one place and working together. It would be a bit cumbersome to keep them each in its own repository, and in sync with each other.
+
+![Java](https://img.shields.io/badge/Java-19-orange)
 
 ---
 ## GLib Java library
+![Version](https://img.shields.io/badge/Version-1.4.0-blue)
 
-![Version](https://img.shields.io/badge/Version-1.3.0-blue)
+Classes and utilities for general development.
+[Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/glib/)
 
-Various Java utility classes to bootstrap development.
+To use in your own projects add it like this (Gradle Kotlin):
 
-[Read the javadocs!](https://glitchybyte.github.io/glitchy-lib/)
+```kotlin
+repositories {
+    maven {
+        url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchybyte-cloud/public-maven")
+    }
+}
 
-This is my personal general purpose library. It is meant to be copied over to a current project and expanded as the need arises. Then it's copied back, tests added, and it's ready for the next project. It used to be published, but that meant it was rarely updated.
+dependencies {
+    implementation("com.glitchybyte.glib:glib:1.4.0")
+}
+```
 
 ---
 ## GSpring Java library
+![Version](https://img.shields.io/badge/Version-1.1.0-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.0.0-orange)
 
-![Version](https://img.shields.io/badge/Version-1.0.2-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-2.7.2-orange)
+Setup and utilities for API development with Spring Framework.
+[Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/gspring/)
 
-This is a library for common Spring Boot Web applications. It contains basic configurations, setup, file server endpoints, and common utils for APIs.
+To use in your own projects add it like this (Gradle Kotlin):
+
+```kotlin
+repositories {
+    maven {
+        url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchybyte-cloud/public-maven")
+    }
+}
+
+dependencies {
+    implementation("com.glitchybyte.gspring:gspring:1.1.0")
+}
+```
 
 ---
 ## Build code generator
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 
-`gen-code` generates a humanly readable code. Unique every second, per project, as long as it's used with the same salt. Useful to create watchers or scripts that check for change.
+`gen-code` is a bash script to generate a humanly readable code. Unique every second, per project, as long as it's used with the same salt. Useful to create watchers or scripts that check for change.
 
     ./gen-code MY_SALT
 
+To use, copy `gen-code` script, found in the `artifacts` directory, directly into your solution and call it from your build scripts as needed.
+
+```bash
+# You can output to a file:
+./gen-code MY_SALT > build-code.txt
+
+# Or assign it to a variable:
+my_var=$(./gen-code MY_SALT)
+```
+
 ---
 ## Application runner
+![Version](https://img.shields.io/badge/Version-1.2.0-blue)
 
-![Version](https://img.shields.io/badge/Version-1.1.0-blue)
+Builds, unpacks, and runs a Gradle project on the current console, as opposed to the Gradle run task which doesn't attach a proper console. This runner works on macOS, Linux, and Windows.
 
-Builds, unpacks, and runs a Gradle project on the actual shell, as opposed to the Gradle run task which doesn't attach a proper console.
+    ./run/run GRADLE_ROOT MY_PROJECT [ARG1 ARG2 ...]
 
-Though particular to my project directory structures, it could be easily modified to suit other needs. This runner works on macOS, Linux, and Windows.
+To use, copy the `run` directory, found in the `artifacts` directory, to the root of your solution.
 
-To use, copy the `run` directory to the root of the project (in my case the directory containing the `code` directory).
-
-### macOS or Linux:
-
-    run/run MY_PROJECT [ARG1 ARG2 ...]
-
-### Windows:
-
-    run\run.bat MY_PROJECT [ARG1 ARG2 ...]
+```bash
+# For example: my Gradle root is in the "code" directory withing my overall "solution" directory. The project I want to run is "say":
+# /solution
+#   /code
+#     /say
+#   /run
+./run/run code say "Hello, world!"
+```
