@@ -42,7 +42,8 @@ javadoc_dir="${script_dir}/code/${project}/build/docs/javadoc"
 mv "${javadoc_dir}" "${docs_dir}"
 
 # Replace fonts.
-sed -i"" -E \
+# This doesn't work on Linux, only on macOS. Linux doesn't like the space on -i argument, and macOS wouldn't like the lack of space.
+sed -i "" -E \
   -e "s|^@import url\(.*\);|@import url('https://fonts.googleapis.com/css2?family=Exo+2\&family=JetBrains+Mono\&display=swap');|" \
   -e "s/'DejaVu (Sans|Serif)'/'Exo 2'/" \
   -e "s/'DejaVu Sans Mono'/'JetBrains Mono'/" \

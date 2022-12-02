@@ -14,7 +14,7 @@
 body {
     background-color:#ffffff;
     color:#353833;
-    font-family:'DejaVu Sans', Arial, Helvetica, sans-serif;
+    font-family:'Exo 2', Arial, Helvetica, sans-serif;
     font-size:14px;
     margin:0;
     padding:0;
@@ -94,7 +94,7 @@ sup {
     font-size:8px;
 }
 button {
-    font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    font-family: 'Exo 2', Arial, Helvetica, sans-serif;
     font-size: 14px;
 }
 /*
@@ -270,7 +270,7 @@ main {
     position:relative;
 }
 dl.notes > dt {
-    font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    font-family: 'Exo 2', Arial, Helvetica, sans-serif;
     font-size:12px;
     font-weight:bold;
     margin:10px 0 0 0;
@@ -279,7 +279,7 @@ dl.notes > dt {
 dl.notes > dd {
     margin:5px 10px 10px 0;
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+    font-family:'Exo 2', Georgia, "Times New Roman", Times, serif;
 }
 dl.name-value > dt {
     margin-left:1px;
@@ -545,7 +545,7 @@ div.checkboxes > label > input {
  */
 div.block {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+    font-family:'Exo 2', Georgia, "Times New Roman", Times, serif;
 }
 .col-last div {
     padding-top:0;
@@ -599,7 +599,7 @@ div.block {
 }
 .deprecation-block {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+    font-family:'Exo 2', Georgia, "Times New Roman", Times, serif;
     border-style:solid;
     border-width:thin;
     border-radius:10px;
@@ -610,7 +610,7 @@ div.block {
 }
 .preview-block {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+    font-family:'Exo 2', Georgia, "Times New Roman", Times, serif;
     border-style:solid;
     border-width:thin;
     border-radius:10px;
@@ -624,7 +624,7 @@ div.block div.deprecation-comment {
 }
 details.invalid-tag, span.invalid-tag {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+    font-family:'Exo 2', Georgia, "Times New Roman", Times, serif;
     background: #ffe6e6;
     border: thin solid #000000;
     border-radius:2px;
@@ -675,7 +675,7 @@ ul.ui-autocomplete li.ui-static-link {
     left:0;
     background: #dee3e9;
     padding: 5px 0;
-    font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    font-family: 'Exo 2', Arial, Helvetica, sans-serif;
     font-size: 13px;
     font-weight: bolder;
     z-index: 2;
