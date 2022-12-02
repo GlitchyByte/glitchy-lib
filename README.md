@@ -56,7 +56,7 @@ dependencies {
 
     ./gen-code MY_SALT
 
-To use, copy `gen-code` script, found in the `artifacts` directory, directly into your solution and call it from your build scripts as needed.
+To use, copy `gen-code` script, found in the `artifacts` directory, directly into your solution and call it from your build scripts as needed. The file is small enough to be committed as part of your solution.
 
 ```bash
 # You can output to a file:
@@ -74,7 +74,7 @@ Builds, unpacks, and runs a Gradle project on the current console, as opposed to
 
     ./run/run GRADLE_ROOT MY_PROJECT [ARG1 ARG2 ...]
 
-To use, copy the `run` directory, found in the `artifacts` directory, to the root of your solution.
+To use, copy the `run` directory, found in the `artifacts` directory, to the root of your solution. The directory and its contents are small enough to be committed as part of your solution.
 
 ```bash
 # For example: my Gradle root is in the "code" directory withing my overall "solution" directory. The project I want to run is "say":
