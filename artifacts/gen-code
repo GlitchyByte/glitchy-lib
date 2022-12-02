@@ -1,6 +1,8 @@
 #!/bin/bash
-# Copyright 2021 GlitchyByte
+# Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: Apache-2.0
+
+# gen-code v1.0.0
 
 # Generate a time-based code.
 # Unique per project as long as it's used with the same salt.
