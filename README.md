@@ -33,7 +33,7 @@ dependencies {
 
 ---
 ## GSpring Java library
-![Version](https://img.shields.io/badge/Version-1.1.0-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.0.0-orange)
+![Version](https://img.shields.io/badge/Version-1.1.1-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.0.0-orange)
 
 Setup and utilities for API development with Spring Framework.
 [Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/gspring/)
@@ -52,7 +52,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.gspring:gspring:1.1.0")
+    implementation("com.glitchybyte.gspring:gspring:1.1.1")
 }
 ```
 
