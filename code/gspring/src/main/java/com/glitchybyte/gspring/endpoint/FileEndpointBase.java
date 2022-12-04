@@ -1,7 +1,7 @@
 // Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gspring.template;
+package com.glitchybyte.gspring.endpoint;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,6 @@ import java.util.concurrent.CompletableFuture;
  * Base abstract class for serving local files.
  */
 public abstract class FileEndpointBase {
-
-    protected static final CompletableFuture<ResponseEntity<StreamingResponseBody>> NOT_FOUND =
-            CompletableFuture.completedFuture(ResponseEntity.notFound().build());
 
     private final CompletableFuture<ResponseEntity<StreamingResponseBody>> redirectToRoot;
     private final Path sourceRootPath;
@@ -44,6 +41,12 @@ public abstract class FileEndpointBase {
         this.cacheControl = cacheControl;
     }
 
+    /**
+     * Serves the given file. If the URI points to root, it will automatically append "index.html" to it.
+     *
+     * @param requestedUri URI to serve.
+     * @return A streaming response payload.
+     */
     public CompletableFuture<ResponseEntity<StreamingResponseBody>> serveFileWithIndex(final String requestedUri) {
         if (requestedUri.isEmpty()) {
             return redirectToRoot;
@@ -54,13 +57,34 @@ public abstract class FileEndpointBase {
         return serveFile(requestedUri);
     }
 
+    /**
+     * Serves the given file.
+     *
+     * @param requestedUri URI to serve.
+     * @return A streaming response payload.
+     */
     public CompletableFuture<ResponseEntity<StreamingResponseBody>> serveFile(final String requestedUri) {
         final Path localPath = sourceRootPath.resolve(requestedUri.substring(1));
         return serveLocalPath(localPath);
     }
 
+    /**
+     * Returns a streaming response of the given local file.
+     *
+     * <p>Implementation is dependent on the kind of endpoint: dynamic or static.
+     *
+     * @param localPath Local path to file to be transmitted.
+     * @return A streaming response payload.
+     */
     protected abstract CompletableFuture<ResponseEntity<StreamingResponseBody>> serveLocalPath(final Path localPath);
 
+    /**
+     * Creates a streaming response for the given path.
+     *
+     * @param localPath Local path to file to be transmitted.
+     * @param mediaType Media type of file.
+     * @return A streaming response payload.
+     */
     protected CompletableFuture<ResponseEntity<StreamingResponseBody>> streamingResponse(final Path localPath, final MediaType mediaType) {
         final StreamingResponseBody stream = outputStream -> {
             try (final InputStream inputStream = Files.newInputStream(localPath)) {

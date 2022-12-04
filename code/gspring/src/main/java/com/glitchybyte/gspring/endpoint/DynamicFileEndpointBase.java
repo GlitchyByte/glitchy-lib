@@ -1,8 +1,9 @@
 // Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gspring.template;
+package com.glitchybyte.gspring.endpoint;
 
+import com.glitchybyte.gspring.GRequestResponse;
 import com.glitchybyte.gspring.GSpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,27 @@ import java.util.concurrent.CompletableFuture;
  * Abstract endpoint to serve local files.
  * This endpoint assumes files can be added to or removed from the root being served.
  * If files are not going to change it is more efficient to use {@link StaticFileEndpointBase}.
+ *
+ * <p>Example dummy Concrete class:
+ * {@snippet :
+ * @RestController
+ * @RequestMapping(DummyEndpoint.BASE_URI)
+ * public class DummyEndpoint extends DynamicFileEndpointBase {
+ *
+ *     public static final String BASE_URI = "";
+ *
+ *     public DummyEndpoint() {
+ *         super(BASE_URI, Path.of("path/to/content/root"));
+ *     }
+ *
+ *     @Async(AsyncConfiguration.TASK_EXECUTOR_CONTROLLER)
+ *     @GetMapping("/**")
+ *     public CompletableFuture<ResponseEntity<StreamingResponseBody>> dummy(final HttpServletRequest request) {
+ *         final String requestedUri = request.getRequestURI().substring(BASE_URI.length());
+ *         return serveFile(requestedUri);
+ *     }
+ * }
+ * }
  */
 public abstract class DynamicFileEndpointBase extends FileEndpointBase {
 
@@ -37,12 +59,12 @@ public abstract class DynamicFileEndpointBase extends FileEndpointBase {
     @Override
     protected CompletableFuture<ResponseEntity<StreamingResponseBody>> serveLocalPath(final Path localPath) {
         if (!Files.isRegularFile(localPath)) {
-            return NOT_FOUND;
+            return GRequestResponse.NOT_FOUND;
         }
         final MediaType mediaType = GSpringUtils.getMediaType(localPath);
         if (mediaType == null) {
             log.warn("MediaType not found for: {}", localPath);
-            return NOT_FOUND;
+            return GRequestResponse.NOT_FOUND;
         }
         return streamingResponse(localPath, mediaType);
     }

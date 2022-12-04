@@ -19,16 +19,15 @@ import java.util.concurrent.Executor;
  * This class sets up async configuration.
  *
  * <p>At a minimum have this class in your configuration:
- *
  * {@snippet :
- *     @Configuration
- *     public class WebMvcConfiguration extends GWebMvcConfiguration {
+ * @Configuration
+ * public class WebMvcConfiguration extends GWebMvcConfiguration {
  *
- *         @Autowired
- *         protected WebMvcConfiguration(final Executor taskExecutor) {
- *             super(taskExecutor);
- *         }
+ *     @Autowired
+ *     protected WebMvcConfiguration(final Executor taskExecutor) {
+ *         super(taskExecutor);
  *     }
+ * }
  * }
  */
 public abstract class GWebMvcConfiguration extends WebMvcConfigurationSupport {
@@ -37,6 +36,11 @@ public abstract class GWebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private final Executor taskExecutor;
 
+    /**
+     * Creates an async {@code WebMvcConfigurationSupport} with sensible defaults.
+     *
+     * @param taskExecutor Executor to handle requests asynchronously.
+     */
     protected GWebMvcConfiguration(final Executor taskExecutor) {
         this.taskExecutor = taskExecutor;
     }
@@ -49,6 +53,13 @@ public abstract class GWebMvcConfiguration extends WebMvcConfigurationSupport {
         super.configureAsyncSupport(configurer);
     }
 
+    /**
+     * Timeout handler.
+     *
+     * <p>This handler simply logs the event.
+     *
+     * @return The timeout handler.
+     */
     protected CallableProcessingInterceptor getCallableProcessingInterceptor() {
         return new TimeoutCallableProcessingInterceptor() {
             @Override

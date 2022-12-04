@@ -1,8 +1,9 @@
 // Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gspring.template;
+package com.glitchybyte.gspring.endpoint;
 
+import com.glitchybyte.gspring.GRequestResponse;
 import com.glitchybyte.gspring.GSpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,28 @@ import java.util.stream.Stream;
 /**
  * Abstract endpoint to serve local files.
  * This endpoint assumes files will not be added to or removed from the root being served.
+ *
+ * <p>Example dummy Concrete class:
+ * {@snippet :
+ * @RestController
+ * @RequestMapping(DummyEndpoint.BASE_URI)
+ * public class DummyEndpoint extends StaticFileEndpointBase {
+ *
+ *     public static final String BASE_URI = "";
+ *     private static final Duration MAX_AGE = Duration.ofHours(2);
+ *
+ *     public DummyEndpoint() {
+ *         super(BASE_URI, Path.of("path/to/content/root"), MAX_AGE);
+ *     }
+ *
+ *     @Async(AsyncConfiguration.TASK_EXECUTOR_CONTROLLER)
+ *     @GetMapping("/**")
+ *     public CompletableFuture<ResponseEntity<StreamingResponseBody>> dummy(final HttpServletRequest request) {
+ *         final String requestedUri = request.getRequestURI().substring(BASE_URI.length());
+ *         return serveFile(requestedUri);
+ *     }
+ * }
+ * }
  */
 public abstract class StaticFileEndpointBase extends FileEndpointBase {
 
@@ -76,7 +99,7 @@ public abstract class StaticFileEndpointBase extends FileEndpointBase {
     protected CompletableFuture<ResponseEntity<StreamingResponseBody>> serveLocalPath(final Path localPath) {
         final MediaType mediaType = pathMediaTypeMap.get(localPath);
         if (mediaType == null) {
-            return NOT_FOUND;
+            return GRequestResponse.NOT_FOUND;
         }
         return streamingResponse(localPath, mediaType);
     }
