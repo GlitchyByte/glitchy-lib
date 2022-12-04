@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.glitchybyte.gspring"},{"l":"com.glitchybyte.gspring.configuration"},{"l":"com.glitchybyte.gspring.template"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.glitchybyte.gspring"},{"l":"com.glitchybyte.gspring.configuration"},{"l":"com.glitchybyte.gspring.endpoint"}];updateSearchResults();
