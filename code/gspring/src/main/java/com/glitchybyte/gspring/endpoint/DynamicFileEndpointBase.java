@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
  * This endpoint assumes files can be added to or removed from the root being served.
  * If files are not going to change it is more efficient to use {@link StaticFileEndpointBase}.
  *
- * <p>Example dummy Concrete class:
+ * <p>Example dummy concrete class:
  * {@snippet :
  * @RestController
  * @RequestMapping(DummyEndpoint.BASE_URI)

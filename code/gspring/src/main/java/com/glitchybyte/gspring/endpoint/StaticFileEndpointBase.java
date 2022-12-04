@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * Abstract endpoint to serve local files.
  * This endpoint assumes files will not be added to or removed from the root being served.
  *
- * <p>Example dummy Concrete class:
+ * <p>Example dummy concrete class:
  * {@snippet :
  * @RestController
  * @RequestMapping(DummyEndpoint.BASE_URI)
