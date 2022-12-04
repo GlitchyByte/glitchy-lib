@@ -16,6 +16,10 @@ Classes and utilities for general development.
 To use in your own projects add it like this (Gradle Kotlin):
 
 ```kotlin
+plugins {
+    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.0"
+}
+
 repositories {
     maven {
         url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchybyte-cloud/public-maven")
@@ -37,6 +41,10 @@ Setup and utilities for API development with Spring Framework.
 To use in your own projects add it like this (Gradle Kotlin):
 
 ```kotlin
+plugins {
+    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.0"
+}
+
 repositories {
     maven {
         url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchybyte-cloud/public-maven")
