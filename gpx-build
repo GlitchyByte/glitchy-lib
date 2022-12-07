@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
@@ -20,7 +20,7 @@ cd "${script_dir}/code"
 ./gradlew :${project}:clean :${project}:build
 if test $? -ne 0; then
   echoerr "Failure!"
-  cd "$calling_dir"
+  cd "${calling_dir}"
   exit 1
 fi
 

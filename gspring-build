@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Copyright 2021-2022 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
@@ -19,11 +19,11 @@ project="gspring"
 docs_dir="${script_dir}/docs/${project}"
 
 # Remove docs directory, if it exists.
-if test -d "$docs_dir"; then
-  rm -dr "$docs_dir"
+if test -d "${docs_dir}"; then
+  rm -dr "${docs_dir}"
   if test $? -ne 0; then
-    echoerr "Can't remove '$docs_dir'!"
-    cd "$calling_dir"
+    echoerr "Can't remove '${docs_dir}'!"
+    cd "${calling_dir}"
     exit 1
   fi
 fi
@@ -33,7 +33,7 @@ cd "${script_dir}/code"
 ./gradlew :${project}:clean :${project}:build :${project}:javadoc
 if test $? -ne 0; then
   echoerr "Failure!"
-  cd "$calling_dir"
+  cd "${calling_dir}"
   exit 1
 fi
 
