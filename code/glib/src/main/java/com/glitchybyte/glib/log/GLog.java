@@ -1,133 +1,61 @@
-// Copyright 2014-2021 GlitchyByte
+// Copyright 2014-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.log;
 
-import com.glitchybyte.glib.GObjects;
-import com.glitchybyte.glib.GStrings;
-
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.*;
 
 /**
  * Logger class.
- * <p>
- * Implements a nice time format and shows thread name.
- * Made to log one-liners (except for exceptions).
+ *
+ * <p>Made to log one-liners (except for exceptions).
  * Set logger name before use to change default name.
  * Default logging level is CONFIG.
  */
 public final class GLog {
 
-    private static String loggerName = "com.glitchybyte";
+    private static String LOGGER_NAME = "com.glitchybyte";
 
-    private static final DateTimeFormatter localDateFormatter =
-            DateTimeFormatter.ofPattern("uuuu-MM-dd|HH:mm:ss.SSS", Locale.US)
-                    .withZone(ZoneOffset.systemDefault());
+    private static Logger LOGGER = null;
 
-    private static Logger logger = null;
-
-    private static Logger createLogger(final String loggerName) {
-        final Logger logger = Logger.getLogger(loggerName);
-        logger.setUseParentHandlers(false);
-        final ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SimpleFormatter() {
-            @Override
-            public String format(final LogRecord record) {
-                final String dateTime = localDateFormatter.format(record.getInstant());
-                final Object[] parameters = record.getParameters();
-                final String threadName;
-                final String className;
-                final String message;
-                final Throwable throwable;
-                if ((parameters == null) || (parameters.length == 0)) {
-                    threadName = null;
-                    className = null;
-                    message = record.getMessage();
-                    throwable = record.getThrown();
-                } else {
-                    threadName = GObjects.castOrNull(parameters[0], String.class);
-                    className = GObjects.castOrNull(parameters[1], String.class);
-                    if (parameters.length > 2) {
-                        throwable = GObjects.castOrNull(parameters[2], Throwable.class);
-                        message = throwable != null ? throwable.toString() : record.getMessage();
-                    } else {
-                        message = record.getMessage();
-                        throwable = null;
-                    }
-                }
-                final StringBuilder sb = new StringBuilder(dateTime);
-                sb.append(' ');
-                sb.append(record.getLevel().getName());
-                if (threadName != null) {
-                    sb.append(" [");
-                    sb.append(threadName);
-                    sb.append(']');
-                }
-                if (className != null) {
-                    sb.append(' ');
-                    final int p = className.lastIndexOf('.');
-                    sb.append(p == -1 ? className : className.substring(p + 1));
-                    sb.append(':');
-                }
-                sb.append(' ');
-                sb.append(message);
-                sb.append(GStrings.NEW_LINE);
-                if (throwable != null) {
-                    for (final var element: throwable.getStackTrace()) {
-                        sb.append(GStrings.SPACE_TAB);
-                        sb.append(element.toString());
-                        sb.append(GStrings.NEW_LINE);
-                    }
-                }
-                return sb.toString();
+    /**
+     * Sets up the root console logger with our custom formatter.
+     *
+     * @param useColor True for console color output.
+     */
+    public static void setupRootConsoleLogger(final boolean useColor) {
+        final Logger logger = Logger.getLogger("");
+        final Formatter formatter = useColor ? new GLogColorFormatter() : new GLogStandardFormatter();
+        Handler consoleHandler = null;
+        for (final Handler handler: logger.getHandlers()) {
+            if (handler instanceof ConsoleHandler) {
+                consoleHandler = handler;
+                break;
             }
-        });
-        handler.setLevel(Level.ALL);
-        logger.addHandler(handler);
-        return logger;
+        }
+        if (consoleHandler == null) {
+            consoleHandler = new ConsoleHandler();
+            logger.addHandler(consoleHandler);
+        }
+        consoleHandler.setFormatter(formatter);
+        consoleHandler.setLevel(Level.ALL);
     }
 
     private static Logger getLogger() {
-        if (logger == null) {
-            logger = createLogger(loggerName);
-            logger.setLevel(Level.CONFIG);
+        if (LOGGER == null) {
+            LOGGER = Logger.getLogger(LOGGER_NAME);
+            LOGGER.setLevel(Level.ALL);
         }
-        return logger;
+        return LOGGER;
     }
 
     /**
      * Resets the default logger.
-     * <p>
-     * Clears the default logger. Next time a log is issued, a new logger is created.
+     *
+     * <p>Clears the default logger. Next time a log is issued, a new logger is created.
      */
     public static void resetLogger() {
-        logger = null;
-    }
-
-    private static final Map<String, Logger> extraLoggers = new HashMap<>();
-
-    /**
-     * Register a non-default logger.
-     *
-     * @param name Logger name.
-     */
-    public static void registerLogger(final String name) {
-        extraLoggers.put(name, createLogger(name));
-    }
-
-    /**
-     * Returns the names of non-default loggers.
-     *
-     * @return Names of non-default loggers.
-     */
-    public static Set<String> getRegisteredLoggers() {
-        return extraLoggers.keySet();
+        LOGGER = null;
     }
 
     /**
@@ -136,10 +64,10 @@ public final class GLog {
      * @param name Logger name.
      */
     public static void setName(final String name) {
-        if (logger != null) {
+        if (LOGGER != null) {
             throw new IllegalStateException("Logger already created. Name can't be set.");
         }
-        loggerName = name;
+        LOGGER_NAME = name;
     }
 
     /**
@@ -156,36 +84,41 @@ public final class GLog {
      * Logs a message at the specified level.
      *
      * @param level Log level for the message.
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void log(final Level level, final String format, final Object... args) {
+    public static void log(final Level level, final String msg, final Object... params) {
         final Logger logger = getLogger();
         final Thread currentThread = Thread.currentThread();
-        logger.log(level, GStrings.format(format, args), new Object[] {
-                currentThread.getName(),
-                currentThread.getStackTrace()[3].getClassName()
-        });
+        final StackTraceElement stackTraceElement = currentThread.getStackTrace()[3];
+        final String className = stackTraceElement.getClassName();
+        final String methodName = stackTraceElement.getMethodName();
+        logger.logp(level, className, methodName, msg, params);
     }
 
-    private static void log(final Level level, final Throwable throwable) {
+    /**
+     * Logs a throwable at the specified level.
+     *
+     * @param level Log level for the message.
+     * @param throwable Throwable to log.
+     */
+    public static void log(final Level level, final Throwable throwable) {
         final Logger logger = getLogger();
         final Thread currentThread = Thread.currentThread();
-        logger.log(level, null, new Object[] {
-                currentThread.getName(),
-                currentThread.getStackTrace()[3].getClassName(),
-                throwable
-        });
+        final StackTraceElement stackTraceElement = currentThread.getStackTrace()[3];
+        final String className = stackTraceElement.getClassName();
+        final String methodName = stackTraceElement.getMethodName();
+        logger.logp(level, className, methodName, throwable.getMessage(), throwable);
     }
 
     /**
      * Logs a message at {@code FINEST} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void finest(final String format, final Object... args) {
-        log(Level.FINEST, format, args);
+    public static void finest(final String msg, final Object... params) {
+        log(Level.FINEST, msg, params);
     }
 
     /**
@@ -200,11 +133,11 @@ public final class GLog {
     /**
      * Logs a message at {@code FINER} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void finer(final String format, final Object... args) {
-        log(Level.FINER, format, args);
+    public static void finer(final String msg, final Object... params) {
+        log(Level.FINER, msg, params);
     }
 
     /**
@@ -219,11 +152,11 @@ public final class GLog {
     /**
      * Logs a message at {@code FINE} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void fine(final String format, final Object... args) {
-        log(Level.FINE, format, args);
+    public static void fine(final String msg, final Object... params) {
+        log(Level.FINE, msg, params);
     }
 
     /**
@@ -238,11 +171,11 @@ public final class GLog {
     /**
      * Logs a message at {@code CONFIG} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void config(final String format, final Object... args) {
-        log(Level.CONFIG, format, args);
+    public static void config(final String msg, final Object... params) {
+        log(Level.CONFIG, msg, params);
     }
 
     /**
@@ -257,11 +190,11 @@ public final class GLog {
     /**
      * Logs a message at {@code INFO} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void info(final String format, final Object... args) {
-        log(Level.INFO, format, args);
+    public static void info(final String msg, final Object... params) {
+        log(Level.INFO, msg, params);
     }
 
     /**
@@ -276,11 +209,11 @@ public final class GLog {
     /**
      * Logs a message at {@code WARNING} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void warning(final String format, final Object... args) {
-        log(Level.WARNING, format, args);
+    public static void warning(final String msg, final Object... params) {
+        log(Level.WARNING, msg, params);
     }
 
     /**
@@ -295,11 +228,11 @@ public final class GLog {
     /**
      * Logs a message at {@code SEVERE} level.
      *
-     * @param format Format of message to log.
-     * @param args Arguments of format.
+     * @param msg Message to log.
+     * @param params Message parameters.
      */
-    public static void severe(final String format, final Object... args) {
-        log(Level.SEVERE, format, args);
+    public static void severe(final String msg, final Object... params) {
+        log(Level.SEVERE, msg, params);
     }
 
     /**
@@ -309,6 +242,20 @@ public final class GLog {
      */
     public static void severe(final Throwable throwable) {
         log(Level.SEVERE, throwable);
+    }
+
+    /**
+     * Logs tests for all possible levels plus an exception.
+     */
+    public static void logTest() {
+        severe("severe");
+        warning("warning");
+        info("info");
+        config("config");
+        fine("fine");
+        finer("finer");
+        finest("finest");
+        severe(new IllegalStateException("Exception!"));
     }
 
     private GLog() {

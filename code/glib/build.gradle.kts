@@ -1,4 +1,4 @@
-// Copyright 2020-2022 GlitchyByte
+// Copyright 2020-2023 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
 plugins {
@@ -35,4 +35,4 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.4.0"
+version = "1.5.0"

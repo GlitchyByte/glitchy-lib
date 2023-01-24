@@ -1,4 +1,4 @@
-// Copyright 2020-2022 GlitchyByte
+// Copyright 2020-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -34,10 +34,10 @@ public final class GShutdownMonitor {
     }
 
     private static void triggerShutdown(final Signal signal) {
-        if (shutdownLock.get()) {
-            return;
-        }
         synchronized (shutdownLock) {
+            if (shutdownLock.get()) {
+                return;
+            }
             shutdownLock.set(true);
             shutdownMonitors.forEach(GShutdownMonitor::shutdown);
             shutdownMonitors.clear();
@@ -73,22 +73,23 @@ public final class GShutdownMonitor {
     }
 
     /**
-     * Holds execution of this thread until a shutdown is triggered or for the given milliseconds,
-     * whichever happens first.
+     * Holds execution of this thread until a shutdown is triggered or for the
+     * given milliseconds, whichever happens first.
      *
      * <p>If a shutdown has been already triggered, the thread will not be held.
      *
      * @param timeoutMillis Timeout in milliseconds, or zero to wait forever.
      */
-    public synchronized void hold(final long timeoutMillis) {
+    public synchronized void awaitShutdown(final long timeoutMillis) {
         if (shouldShutdown()) {
             return;
         }
         try {
             GObjects.hold(this, timeoutMillis);
         } catch (final InterruptedException e) {
-            shutdown();
+            // No-op.
         }
+        shutdown();
     }
 
     /**
@@ -96,8 +97,8 @@ public final class GShutdownMonitor {
      *
      * <p>If a shutdown has been already triggered, the thread will not be held.
      */
-    public synchronized void hold() {
-        hold(0);
+    public synchronized void awaitShutdown() {
+        awaitShutdown(0);
     }
 
     /**
@@ -110,7 +111,7 @@ public final class GShutdownMonitor {
     public void whileLive(final long cadenceMillis, final Runnable action) {
         while (!shouldShutdown()) {
             action.run();
-            hold(cadenceMillis);
+            awaitShutdown(cadenceMillis);
         }
     }
 }

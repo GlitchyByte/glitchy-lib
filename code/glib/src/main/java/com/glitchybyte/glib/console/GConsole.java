@@ -1,4 +1,4 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.console;
@@ -12,15 +12,13 @@ import java.io.PrintWriter;
  * Helper class to print color text to console.
  * It assumes 256 colors (at least).
  * If there is no console, it will do nothing.
- * <p>
- * Example usage:
- * <pre>
- * {@code
+ *
+ * <p>Example usage:
+ * {@snippet :
  * GConsole.print("This is " + GConsole.coloredText("cyan", GConsole.COLOR_CYAN, null) + " text.\n");
  * GConsole.println("And this is %s text.", GConsole.coloredText("orange", GConsole.rgb(5, 2, 1), null));
  * GConsole.flush();
  * }
- * </pre>
  * @see <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
  */
 public final class GConsole {
@@ -233,7 +231,7 @@ public final class GConsole {
     }
 
     /**
-     * Returns a {@code String} that will resets colors when printed.
+     * Returns a {@code String} that will reset colors when printed.
      *
      * @return {@code String} with encoded command.
      */
@@ -270,6 +268,26 @@ public final class GConsole {
     }
 
     /**
+     * Returns a {@code String} that will change the foreground color.
+     *
+     * @param color Color code.
+     * @return {@code String} with encoded command.
+     */
+    public static String foregroundColor(final int color) {
+        return GStrings.format(CSI_COLOR_FOREGROUND, color);
+    }
+
+    /**
+     * Returns a {@code String} that will change the background color.
+     *
+     * @param color Color code.
+     * @return {@code String} with encoded command.
+     */
+    public static String backgroundColor(final int color) {
+        return GStrings.format(CSI_COLOR_BACKGROUND, color);
+    }
+
+    /**
      * Returns a {@code String} that represents {@code text} with the given colors when printed.
      *
      * @param text Test to print.
@@ -280,10 +298,10 @@ public final class GConsole {
     public static String coloredText(final String text, final Integer fgColor, final Integer bgColor) {
         final StringBuilder sb = new StringBuilder(COLORED_TEXT_MIN_BUFFER_LENGTH + text.length());
         if (fgColor != null) {
-            sb.append(GStrings.format(CSI_COLOR_FOREGROUND, fgColor));
+            sb.append(foregroundColor(fgColor));
         }
         if (bgColor != null) {
-            sb.append(GStrings.format(CSI_COLOR_BACKGROUND, bgColor));
+            sb.append(backgroundColor(bgColor));
         }
         sb.append(text);
         sb.append(CSI_COLOR_RESET);

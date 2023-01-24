@@ -1,4 +1,4 @@
-// Copyright 2014-2022 GlitchyByte
+// Copyright 2014-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -52,6 +52,25 @@ public final class GObjects {
      */
     public static void hold(final Object obj) throws InterruptedException {
         hold(obj, 0);
+    }
+
+    /**
+     * Waits forever on an object until it is interrupted.
+     *
+     * <p>Even if notified, the object will continue waiting. The only way out
+     * is by an {@code InterruptedException}.
+     *
+     * @param obj Object to wait on.
+     */
+    public static void holdUntilInterrupted(final Object obj) {
+        try {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                com.glitchybyte.glib.GObjects.hold(obj);
+            }
+        } catch (final InterruptedException e) {
+            // No-op.
+        }
     }
 
     /**
