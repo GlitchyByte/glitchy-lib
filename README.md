@@ -8,7 +8,7 @@ This is a way of keeping my dependencies updated in one place and working togeth
 
 ---
 ## GLib Java library
-![Version](https://img.shields.io/badge/Version-1.4.0-blue)
+![Version](https://img.shields.io/badge/Version-1.5.0-blue)
 
 Classes and utilities for general development.
 [Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/glib/)
@@ -27,13 +27,15 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.4.0")
+    implementation("com.glitchybyte.glib:glib:1.5.0")
 }
 ```
 
 ---
 ## GSpring Java library
 ![Version](https://img.shields.io/badge/Version-1.1.1-blue) ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.0.0-orange)
+
+*ATTENTION! This library will be deprecated soon!!! I am using Helidon instead of SpringBoot now and I love it so much. And it makes 90% of this library useless.*
 
 Setup and utilities for API development with Spring Framework.
 [Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/gspring/)
