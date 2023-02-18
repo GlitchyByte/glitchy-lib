@@ -138,6 +138,38 @@ public final class GStrings {
         return new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Converts a number of bytes to its most reasonable grouping representation.
+     *
+     * @param bytes Quantity of bytes.
+     * @return A string representing those bytes in human-readable form.
+     */
+    public static String bytesToGroupUnit(final long bytes) {
+        double quantity = bytes;
+        String denomination = "b";
+        if (quantity >= 1000) {
+            quantity /= 1024;
+            denomination = "KiB";
+        }
+        if (quantity >= 1000) {
+            quantity /= 1024;
+            denomination = "MiB";
+        }
+        if (quantity >= 1000) {
+            quantity /= 1024;
+            denomination = "GiB";
+        }
+        if (quantity >= 1000) {
+            quantity /= 1024;
+            denomination = "TiB";
+        }
+        if (quantity >= 1000) {
+            quantity /= 1024;
+            denomination = "PiB";
+        }
+        return GStrings.format("%s %s", GStrings.fromDouble(quantity), denomination);
+    }
+
     private GStrings() {
         // Hiding constructor.
     }

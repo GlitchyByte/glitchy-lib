@@ -9,12 +9,12 @@ package com.glitchybyte.glib.log;
  * <p>Uses a compact time format and shows thread name.
  * Made to log one-liners (except for exceptions).
  */
-public final class GLogStandardFormatter extends GLogFormatter {
+public class GStandardLogFormatter extends GLogFormatter {
 
     /**
      * Creates a standard log formatter.
      */
-    public GLogStandardFormatter() {
+    public GStandardLogFormatter() {
         // No-op.
     }
 

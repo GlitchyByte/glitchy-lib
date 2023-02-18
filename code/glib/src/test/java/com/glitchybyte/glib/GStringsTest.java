@@ -80,4 +80,14 @@ public class GStringsTest {
         final String message = GStrings.base64Decode(encoded);
         assertEquals("Obfuscate this", message);
     }
+
+    @Test
+    void bytesToGroup() {
+        assertEquals("100 b", GStrings.bytesToGroupUnit(100L));
+        assertEquals("1 KiB", GStrings.bytesToGroupUnit(1024L));
+        assertEquals("1 MiB", GStrings.bytesToGroupUnit(1024L * 1024));
+        assertEquals("1 GiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024));
+        assertEquals("1 TiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024 * 1024));
+        assertEquals("1 PiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024 * 1024 * 1024));
+    }
 }

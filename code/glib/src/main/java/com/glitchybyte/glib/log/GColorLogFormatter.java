@@ -11,7 +11,7 @@ import com.glitchybyte.glib.console.GConsole;
  * <p>Uses a compact time format and shows thread name.
  * Made to log one-liners (except for exceptions).
  */
-public final class GLogColorFormatter extends GLogFormatter {
+public class GColorLogFormatter extends GLogFormatter {
 
     private static final String COLOR_DATETIME = GConsole.foregroundColor(GConsole.rgb(1, 1, 1));
     private static final String COLOR_LEVEL_SEVERE = GConsole.foregroundColor(GConsole.rgb(5, 2, 2));
@@ -28,7 +28,7 @@ public final class GLogColorFormatter extends GLogFormatter {
     /**
      * Creates a color log formatter.
      */
-    public GLogColorFormatter() {
+    public GColorLogFormatter() {
         // No-op.
     }
 
