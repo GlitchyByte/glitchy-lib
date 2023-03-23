@@ -26,6 +26,11 @@ public final class GConsole {
     private static final Console console = System.console();
     private static final PrintWriter writer = (console == null) ? null : console.writer();
 
+    /**
+     * Carriage return.
+     */
+    public static final String CC_CR = "\r";
+
     /*
      * Control Sequence Introducer constants.
      */
@@ -197,7 +202,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorUp(final int n) {
-        return n == 0? "" : GStrings.format(CSI_CURSOR_UP, n);
+        return n == 0 ? "" : GStrings.format(CSI_CURSOR_UP, n);
     }
 
     /**
@@ -207,7 +212,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorDown(final int n) {
-        return n == 0? "" : GStrings.format(CSI_CURSOR_DOWN, n);
+        return n == 0 ? "" : GStrings.format(CSI_CURSOR_DOWN, n);
     }
 
     /**
@@ -217,7 +222,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorLeft(final int n) {
-        return n == 0? "" : GStrings.format(CSI_CURSOR_BACK, n);
+        return n == 0 ? "" : GStrings.format(CSI_CURSOR_BACK, n);
     }
 
     /**
@@ -227,7 +232,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorRight(final int n) {
-        return n == 0? "" : GStrings.format(CSI_CURSOR_FORWARD, n);
+        return n == 0 ? "" : GStrings.format(CSI_CURSOR_FORWARD, n);
     }
 
     /**
