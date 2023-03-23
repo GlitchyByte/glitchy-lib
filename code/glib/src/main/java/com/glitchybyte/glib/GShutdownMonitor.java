@@ -3,18 +3,24 @@
 
 package com.glitchybyte.glib;
 
+import com.glitchybyte.glib.concurrent.GLock;
 import sun.misc.Signal;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Utility to monitor SIGINT and SIGTERM for proper application shutdown.
  */
 public final class GShutdownMonitor {
 
-    private static final AtomicBoolean shutdownLock = new AtomicBoolean(false);
+    private static final AtomicBoolean generalShutdownInitiated = new AtomicBoolean(false);
+    private static final Lock generalShutdownLock = new ReentrantLock();
     private static final Collection<GShutdownMonitor> shutdownMonitors = new HashSet<>();
 
     /**
@@ -23,25 +29,27 @@ public final class GShutdownMonitor {
      * @return A shutdown monitor.
      */
     public static GShutdownMonitor createShutdownMonitor() {
-        synchronized (shutdownLock) {
-            final boolean isShuttingDown = shutdownLock.get();
+        generalShutdownLock.lock();
+        try {
+            final boolean isShuttingDown = generalShutdownInitiated.get();
             final GShutdownMonitor monitor = new GShutdownMonitor(isShuttingDown);
             if (!isShuttingDown) {
                 shutdownMonitors.add(monitor);
             }
             return monitor;
+        } finally {
+            generalShutdownLock.unlock();
         }
     }
 
     private static void triggerShutdown(final Signal signal) {
-        synchronized (shutdownLock) {
-            if (shutdownLock.get()) {
-                return;
-            }
-            shutdownLock.set(true);
+        if (!generalShutdownInitiated.compareAndSet(false, true)) {
+            return;
+        }
+        GLock.locked(generalShutdownLock, () -> {
             shutdownMonitors.forEach(GShutdownMonitor::shutdown);
             shutdownMonitors.clear();
-        }
+        });
     }
 
     static {
@@ -49,7 +57,9 @@ public final class GShutdownMonitor {
         Signal.handle(new Signal("INT"), GShutdownMonitor::triggerShutdown);
     }
 
-    private boolean isShuttingDown;
+    private volatile boolean isShuttingDown;
+    private final Lock shutdownLock = new ReentrantLock();
+    private final Condition shuttingDown  = shutdownLock.newCondition();
 
     private GShutdownMonitor(final boolean isShuttingDown) {
         this.isShuttingDown = isShuttingDown;
@@ -60,58 +70,67 @@ public final class GShutdownMonitor {
      *
      * @return True when an orderly shutdown should occur.
      */
-    public synchronized boolean shouldShutdown() {
+    public boolean shouldShutdown() {
         return isShuttingDown;
     }
 
     /**
      * Manually triggers an orderly shutdown.
      */
-    public synchronized void shutdown() {
+    public void shutdown() {
         isShuttingDown = true;
-        notifyAll();
+        GLock.signalAll(shutdownLock, shuttingDown);
     }
 
     /**
-     * Holds execution of this thread until a shutdown is triggered or for the
-     * given milliseconds, whichever happens first.
+     * Awaits for a shutdown or expiration of the given timeout.
      *
-     * <p>If a shutdown has been already triggered, the thread will not be held.
+     * <p>If a shutdown has been triggered, the method will exit fast.
      *
-     * @param timeoutMillis Timeout in milliseconds, or zero to wait forever.
+     * @param timeout Time to wait for shutdown.
      */
-    public synchronized void awaitShutdown(final long timeoutMillis) {
+    public void awaitShutdown(final Duration timeout) {
         if (shouldShutdown()) {
             return;
         }
         try {
-            GObjects.hold(this, timeoutMillis);
+            GLock.awaitConditionWithTimeout(shutdownLock, shuttingDown, timeout);
         } catch (final InterruptedException e) {
-            // No-op.
+            // This await is used to exit the app, so there is no need to broadcast
+            // an InterruptedException. We are going to exit anyway.
+            // So we eat it and save the caller from the extra boilerplate.
         }
-        shutdown();
     }
 
     /**
-     * Holds execution of this thread until a shutdown is triggered.
+     * Awaits for a shutdown.
      *
-     * <p>If a shutdown has been already triggered, the thread will not be held.
+     * <p>If a shutdown has been triggered, the method will exit fast.
      */
-    public synchronized void awaitShutdown() {
-        awaitShutdown(0);
+    public void awaitShutdown() {
+        if (shouldShutdown()) {
+            return;
+        }
+        try {
+            GLock.awaitConditionWithTest(shutdownLock, shuttingDown, this::shouldShutdown);
+        } catch (final InterruptedException e) {
+            // This await is used to exit the app, so there is no need to broadcast
+            // an InterruptedException. We are going to exit anyway.
+            // So we eat it and save the caller from the extra boilerplate.
+        }
     }
 
     /**
      * Convenience method to execute an action periodically at the given cadence,
      * until a shutdown is triggered.
      *
-     * @param cadenceMillis Cadence at which to execute the action.
+     * @param cadence Cadence at which to execute the action.
      * @param action Action to execute.
      */
-    public void whileLive(final long cadenceMillis, final Runnable action) {
+    public void whileLive(final Duration cadence, final Runnable action) {
         while (!shouldShutdown()) {
             action.run();
-            awaitShutdown(cadenceMillis);
+            awaitShutdown(cadence);
         }
     }
 }
