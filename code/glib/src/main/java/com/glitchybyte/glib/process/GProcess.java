@@ -3,8 +3,6 @@
 
 package com.glitchybyte.glib.process;
 
-import com.glitchybyte.glib.GObjects;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -139,7 +137,10 @@ public final class GProcess implements Callable<Integer> {
         try {
             if (autoPrintOutput) {
                 while ((state == State.STARTED) && process.isAlive()) {
-                    GObjects.hold(this, 1_000);
+                    // We wait 1s to capture any output before printing.
+                    // We are busy waiting, but I haven't figured out how else to wait for output.
+                    //noinspection BusyWait
+                    Thread.sleep(1_000);
                     printOutput();
                 }
                 final int statusCode = process.waitFor();
@@ -213,8 +214,10 @@ public final class GProcess implements Callable<Integer> {
      * @throws InterruptedException If the wait was interrupted.
      */
     public synchronized boolean waitForState(final State state, final long timeoutMillis) throws InterruptedException {
-        GObjects.waitWithCondition(this, timeoutMillis, () -> this.state == state);
-        return this.state == state;
+        while (this.state != state) {
+            wait();
+        }
+        return true;
     }
 
     /**
