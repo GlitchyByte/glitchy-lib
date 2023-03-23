@@ -30,6 +30,13 @@ public final class GAsyncWorkQueue<T> {
     private final Lock workLock = new ReentrantLock();
 
     /**
+     * Creates an asynchronous work queue.
+     */
+    public GAsyncWorkQueue() {
+        // No-op.
+    }
+
+    /**
      * Queues a work item.
      *
      * @param item Work item.

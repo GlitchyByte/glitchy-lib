@@ -24,6 +24,13 @@ public final class GEventHandler extends GConcurrentTask {
     private final Lock handlersLock = new ReentrantLock();
     private final GAsyncWorkQueue<GEvent> events = new GAsyncWorkQueue<>();
 
+    /**
+     * Creates an event handler.
+     */
+    public GEventHandler() {
+        // No-op.
+    }
+
     @Override
     public void run() {
         started();

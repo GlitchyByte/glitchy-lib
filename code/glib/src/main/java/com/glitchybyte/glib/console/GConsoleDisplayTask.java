@@ -5,10 +5,18 @@ package com.glitchybyte.glib.console;
 
 import com.glitchybyte.glib.concurrent.GConcurrentTask;
 
+/**
+ * Convenience task to setup a console UI.
+ */
 public final class GConsoleDisplayTask extends GConcurrentTask {
 
     private final GRootPanel rootPanel;
 
+    /**
+     * Creates a console display task with the given root panel.
+     *
+     * @param rootPanel Root panel containing UI.
+     */
     public GConsoleDisplayTask(final GRootPanel rootPanel) {
         this.rootPanel = rootPanel;
     }

@@ -134,6 +134,11 @@ public final class GLog {
         LOG_EVENT_KEY = LOGGER_NAME + ".Log";
     }
 
+    /**
+     * Returns the log event key, if logs are being redirected to an event handler.
+     *
+     * @return The log event key.
+     */
     public static String getLogEventKey() {
         return LOG_EVENT_KEY;
     }

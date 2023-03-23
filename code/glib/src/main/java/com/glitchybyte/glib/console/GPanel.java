@@ -7,17 +7,54 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Console UI panel.
+ */
 public abstract class GPanel {
 
-    private GPanel parent = null;
+    /**
+     * Panel Z position. Lower number gets drawn first.
+     */
     public final int zOrder;
+
+    /**
+     * X position.
+     */
     public final int x;
+
+    /**
+     * Y position.
+     */
     public final int y;
+
+    /**
+     * Panel width.
+     */
     public final int width;
+
+    /**
+     * Panel height.
+     */
     public final int height;
+
+    /**
+     * Root panel that contains all panels.
+     */
+    protected GRootPanel rootPanel = null;
+
+    private GPanel parent = null;
     private final List<GPanel> panels = new ArrayList<>();
     private String imprint = "";
 
+    /**
+     * Creates a console panel.
+     *
+     * @param zOrder Panel Z position. Lower number gets drawn first.
+     * @param x X position.
+     * @param y Y position.
+     * @param width Panel width.
+     * @param height Panel height.
+     */
     public GPanel(final int zOrder, final int x, final int y, final int width, final int height) {
         this.zOrder = zOrder;
         this.x = x;
@@ -31,23 +68,44 @@ public abstract class GPanel {
                 ((panel.y + panel.height) <= height);
     }
 
+    /**
+     * Adds a child panel to this panel.
+     *
+     * @param panel Child panel.
+     */
     public void addPanel(final GPanel panel) {
         if (!willFit(panel)) {
             throw new IllegalArgumentException("Panel doesn't fit parent!");
         }
+        panel.rootPanel = rootPanel;
         panel.parent = this;
         panels.add(panel);
         panels.sort(Comparator.comparingInt(p -> p.zOrder));
     }
 
+    /**
+     * Returns the distance from the left of the screen to the left side of this panel.
+     *
+     * @return The distance from the left of the screen to the left side of this panel.
+     */
     protected int getXOffset() {
         return parent == null ? x : x + parent.getXOffset();
     }
 
+    /**
+     * Returns the distance from the top of the root panel the top side of this panel.
+     *
+     * @return The distance from the top of the root panel the top side of this panel.
+     */
     protected int getYOffset() {
         return parent == null ? y : y + parent.getYOffset();
     }
 
+    /**
+     * Returns a {@code String} to move the cursor to the X offset.
+     *
+     * @return A {@code String} to move the cursor to the X offset.
+     */
     protected String moveToXOffset() {
         return GConsole.CC_CR + GConsole.cursorRight(getXOffset());
     }
@@ -62,19 +120,24 @@ public abstract class GPanel {
      */
     protected abstract String createImprint();
 
+    /**
+     * Signals this panel's contents have changed and needs to be redrawn.
+     */
     protected void signalDirty() {
-        signalDirty(this);
+        rootPanel.signalDirty(this);
     }
 
-    public void signalDirty(final GPanel panel) {
-        parent.signalDirty(panel);
-    }
-
+    /**
+     * Refreshes the imprint.
+     */
     public void refresh() {
         imprint = createImprint();
         panels.forEach(GPanel::refresh);
     }
 
+    /**
+     * Draws the panel.
+     */
     protected void drawPanel() {
         final int yOffset = getYOffset();
         GConsole.print(GConsole.resetColor());
@@ -84,6 +147,14 @@ public abstract class GPanel {
         panels.forEach(GPanel::drawPanel);
     }
 
+    /**
+     * Convenience method to fill the panel area with a glyph and colors.
+     *
+     * @param glyph Glyph to fill the area with.
+     * @param fgColor Foreground color.
+     * @param bgColor Background color.
+     * @return A {@code String} to fill the panel area with a glyph and colors.
+     */
     protected String fill(final char glyph, final Integer fgColor, final Integer bgColor) {
         final String ch = Character.toString(glyph);
         final StringBuilder sb = new StringBuilder();
@@ -102,6 +173,12 @@ public abstract class GPanel {
         return sb.toString();
     }
 
+    /**
+     * Convenience method to fill the panel with a background color.
+     *
+     * @param bgColor Background color.
+     * @return A {@code String} to fill the panel area with a background color.
+     */
     protected String fillBackground(final Integer bgColor) {
         return fill(' ', null, bgColor);
     }
