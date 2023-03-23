@@ -4,6 +4,8 @@
 package com.glitchybyte.glib.log;
 
 import com.glitchybyte.glib.GStrings;
+import com.glitchybyte.glib.concurrent.GEventHandler;
+import com.glitchybyte.glib.concurrent.GTaskRunner;
 
 import java.io.*;
 import java.util.Arrays;
@@ -28,9 +30,13 @@ import java.util.logging.*;
  */
 public final class GLog {
 
-    private static String LOGGER_NAME = "com.glitchybyte";
-
+    private static String LOGGER_NAME;
+    private static String LOG_EVENT_KEY;
     private static Logger LOGGER = null;
+
+    static {
+        setName("com.glitchybyte");
+    }
 
     /**
      * Sets up the root handler to the given handler.
@@ -63,37 +69,39 @@ public final class GLog {
     }
 
     /**
-     * Sets up the root handler to a custom handler that collects lines in a
-     * buffer. The handler will use the given formatter.
+     * Sets up the root console handler to a custom handler that redirects
+     * lines to an event handler. The console handler will use the given formatter.
      *
+     * @param taskRunner Task runner for the redirector task.
+     * @param eventHandler Event handler to send events to.
      * @param formatter Log formatter.
-     * @return A {@code GLineCollector} that collects logs.
      */
-    public static GLineCollector setupRootLineCollectorHandler(final Formatter formatter) {
-        final GLineCollector lineCollector;
+    public static void setupRootLogRedirectorHandler(final GTaskRunner taskRunner,
+            final GEventHandler eventHandler, final Formatter formatter) {
         final PipedOutputStream outputStream = new PipedOutputStream();
         try {
-            final InputStream inputStream = new PipedInputStream(outputStream);
+            final InputStream inputStream = new PipedInputStream(outputStream, 16 * 1_024);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            lineCollector = new GLineCollector(reader).start();
-        } catch (final IOException e) {
+            taskRunner.start(new GLogRedirector(eventHandler, getLogEventKey(), reader));
+        } catch (final IOException | InterruptedException e) {
             throw new IllegalStateException("Error setting up line collector handler!", e);
         }
-        GLog.setupRootHandler(new GStringStreamHandler(outputStream, formatter));
-        return lineCollector;
+        setupRootHandler(new GOutputRedirectHandler(outputStream, formatter));
     }
 
     /**
-     * Sets up the root handler to a custom handler that collects lines in a
-     * buffer. The handler will use a custom formatter that can be made to use
-     * colors or not.
+     * Sets up the root console handler to a custom handler that redirects
+     * lines to an event handler. The console handler will use a custom
+     * formatter that can be made to use colors or not.
      *
+     * @param taskRunner Task runner for the redirector task.
+     * @param eventHandler Event handler to send events to.
      * @param useColor True for console color output.
-     * @return A {@code GLineCollector} that collects logs.
      */
-    public static GLineCollector setupDefaultRootLineCollectorHandler(final boolean useColor) {
+    public static void setupDefaultRootLogRedirectorHandler(final GTaskRunner taskRunner,
+            final GEventHandler eventHandler, final boolean useColor) {
         final Formatter formatter = useColor ? new GColorLogFormatter() : new GStandardLogFormatter();
-        return setupRootLineCollectorHandler(formatter);
+        setupRootLogRedirectorHandler(taskRunner, eventHandler, formatter);
     }
 
     private static Logger getLogger() {
@@ -123,6 +131,11 @@ public final class GLog {
             throw new IllegalStateException("Logger already created. Name can't be set.");
         }
         LOGGER_NAME = name;
+        LOG_EVENT_KEY = LOGGER_NAME + ".Log";
+    }
+
+    public static String getLogEventKey() {
+        return LOG_EVENT_KEY;
     }
 
     /**

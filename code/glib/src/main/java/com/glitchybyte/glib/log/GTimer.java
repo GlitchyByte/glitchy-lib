@@ -4,7 +4,6 @@
 package com.glitchybyte.glib.log;
 
 import com.glitchybyte.glib.GStrings;
-import com.glitchybyte.glib.log.GLog;
 
 import java.time.Duration;
 import java.time.Instant;

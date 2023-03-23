@@ -12,7 +12,7 @@ import java.util.logging.StreamHandler;
 /**
  * Log handler that redirects logs to an output stream.
  */
-public class GStringStreamHandler extends StreamHandler {
+public class GOutputRedirectHandler extends StreamHandler {
 
     /**
      * Creates the log handler.
@@ -20,7 +20,7 @@ public class GStringStreamHandler extends StreamHandler {
      * @param outputStream Log output stream.
      * @param formatter Log formatter.
      */
-    public GStringStreamHandler(final OutputStream outputStream, final Formatter formatter) {
+    public GOutputRedirectHandler(final OutputStream outputStream, final Formatter formatter) {
         super(outputStream, formatter);
         setLevel(Level.ALL);
     }
