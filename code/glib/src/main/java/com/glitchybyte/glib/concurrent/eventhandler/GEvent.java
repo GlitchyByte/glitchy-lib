@@ -1,7 +1,7 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.concurrent;
+package com.glitchybyte.glib.concurrent.eventhandler;
 
 import com.glitchybyte.glib.GObjects;
 
@@ -9,17 +9,6 @@ import com.glitchybyte.glib.GObjects;
  * Event sent by event handler.
  */
 public final class GEvent {
-
-    /**
-     * Creates an event object to be sent to an event handler.
-     *
-     * @param key Event key.
-     * @param data Event data.
-     * @return An event object.
-     */
-    public static GEvent createEvent(final String key, final Object data) {
-        return new GEvent(key, data);
-    }
 
     /**
      * Event key.

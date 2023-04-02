@@ -3,16 +3,25 @@
 
 package com.glitchybyte.glib.concurrent;
 
+import com.glitchybyte.glib.GArrays;
+
 import java.time.Duration;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A task runner facility to run {@code GConcurrentTask} tasks.
+ *
+ * <p>Classes ending in 'Task' in the concurrent package must be started with
+ * a {@code GTaskRunner}.
  */
 public final class GTaskRunner implements AutoCloseable {
 
     private final ExecutorService runner;
+    private final Lock runnerLock = new ReentrantLock();
 
     /**
      * Creates a task runner with the given {@code ExecutorService}.
@@ -46,7 +55,8 @@ public final class GTaskRunner implements AutoCloseable {
      * @throws InterruptedException If the thread is interrupted while waiting for the task to start.
      */
     public <T extends GConcurrentTask> T start(final T task, final Duration timeout) throws InterruptedException {
-        runner.submit(task);
+        task.setTaskRunner(this);
+        run(task);
         task.awaitStarted(timeout);
         return task;
     }
@@ -72,25 +82,28 @@ public final class GTaskRunner implements AutoCloseable {
     /**
      * Submits a {@code Runnable} to be run concurrently.
      *
-     * <p>This is a convenience method to reuse this runner on an arbitrary
-     * {@code Runnable} task. It will mark the task as started when the thread
-     * is already running, but before executing the {@code Runnable} code.
-     *
-     * @param task A {@code Runnable} to run.
+     * @param runnable A {@code Runnable} to run.
      */
-    public void run(final Runnable task) {
-        final GConcurrentTask wrapperTask = new GConcurrentTask() {
-            @Override
-            public void run() {
-                started();
-                task.run();
-            }
-        };
-        try {
-            start(wrapperTask);
-        } catch (final InterruptedException e) {
-            // This can't happen because we are marking as started ourselves.
-        }
+    public void run(final Runnable runnable) {
+        GLock.locked(runnerLock, () -> runner.execute(runnable));
+    }
+
+    /**
+     * Submits an array of {@code Runnable} to be run concurrently.
+     *
+     * @param runnables An array of {@code Runnable} to be run concurrently.
+     */
+    public void runAll(final Runnable[] runnables) {
+        GArrays.forEach(runnables, this::run);
+    }
+
+    /**
+     * Submits a collection of {@code Runnable} to be run concurrently.
+     *
+     * @param runnables A collection of {@code Runnable} to be run concurrently.
+     */
+    public void runAll(final Collection<Runnable> runnables) {
+        runnables.forEach(this::run);
     }
 
     @Override

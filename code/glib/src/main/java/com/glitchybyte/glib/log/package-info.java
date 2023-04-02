@@ -10,8 +10,6 @@
  *     <li>{@code GLog.setupRootHandler}
  *     <li>{@code GLog.setupDefaultRootConsoleHandler}
  *     {@code <-} if you aren't sure, this one is probably what you want.
- *     <li>{@code GLog.setupRootLineCollectorHandler}
- *     <li>{@code GLog.setupDefaultRootLineCollectorHandler}
  * </ul>
  */
 package com.glitchybyte.glib.log;

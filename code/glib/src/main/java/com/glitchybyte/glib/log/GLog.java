@@ -4,13 +4,13 @@
 package com.glitchybyte.glib.log;
 
 import com.glitchybyte.glib.GStrings;
-import com.glitchybyte.glib.concurrent.GEventHandler;
-import com.glitchybyte.glib.concurrent.GTaskRunner;
 
-import java.io.*;
 import java.util.Arrays;
 import java.util.function.Supplier;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Logger class.
@@ -24,19 +24,12 @@ import java.util.logging.*;
  *     <li>{@code setupRootHandler}
  *     <li>{@code setupDefaultRootConsoleHandler}
  *     {@code <-} if you aren't sure, this one is probably what you want.
- *     <li>{@code setupRootLineCollectorHandler}
- *     <li>{@code setupDefaultRootLineCollectorHandler}
  * </ul>
  */
 public final class GLog {
 
-    private static String LOGGER_NAME;
-    private static String LOG_EVENT_KEY;
+    private static String LOGGER_NAME = "com.glitchybyte";
     private static Logger LOGGER = null;
-
-    static {
-        setName("com.glitchybyte");
-    }
 
     /**
      * Sets up the root handler to the given handler.
@@ -68,42 +61,6 @@ public final class GLog {
         setupRootHandler(consoleHandler);
     }
 
-    /**
-     * Sets up the root console handler to a custom handler that redirects
-     * lines to an event handler. The console handler will use the given formatter.
-     *
-     * @param taskRunner Task runner for the redirector task.
-     * @param eventHandler Event handler to send events to.
-     * @param formatter Log formatter.
-     */
-    public static void setupRootLogRedirectorHandler(final GTaskRunner taskRunner,
-            final GEventHandler eventHandler, final Formatter formatter) {
-        final PipedOutputStream outputStream = new PipedOutputStream();
-        try {
-            final InputStream inputStream = new PipedInputStream(outputStream, 16 * 1_024);
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            taskRunner.start(new GLogRedirector(eventHandler, getLogEventKey(), reader));
-        } catch (final IOException | InterruptedException e) {
-            throw new IllegalStateException("Error setting up line collector handler!", e);
-        }
-        setupRootHandler(new GOutputRedirectHandler(outputStream, formatter));
-    }
-
-    /**
-     * Sets up the root console handler to a custom handler that redirects
-     * lines to an event handler. The console handler will use a custom
-     * formatter that can be made to use colors or not.
-     *
-     * @param taskRunner Task runner for the redirector task.
-     * @param eventHandler Event handler to send events to.
-     * @param useColor True for console color output.
-     */
-    public static void setupDefaultRootLogRedirectorHandler(final GTaskRunner taskRunner,
-            final GEventHandler eventHandler, final boolean useColor) {
-        final Formatter formatter = useColor ? new GColorLogFormatter() : new GStandardLogFormatter();
-        setupRootLogRedirectorHandler(taskRunner, eventHandler, formatter);
-    }
-
     private static Logger getLogger() {
         if (LOGGER == null) {
             LOGGER = Logger.getLogger(LOGGER_NAME);
@@ -131,16 +88,6 @@ public final class GLog {
             throw new IllegalStateException("Logger already created. Name can't be set.");
         }
         LOGGER_NAME = name;
-        LOG_EVENT_KEY = LOGGER_NAME + ".Log";
-    }
-
-    /**
-     * Returns the log event key, if logs are being redirected to an event handler.
-     *
-     * @return The log event key.
-     */
-    public static String getLogEventKey() {
-        return LOG_EVENT_KEY;
     }
 
     /**

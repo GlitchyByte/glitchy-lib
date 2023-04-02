@@ -1,7 +1,9 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console;
+package com.glitchybyte.glib.console.display;
+
+import com.glitchybyte.glib.console.GConsole;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -107,7 +109,7 @@ public abstract class GPanel {
      * @return A {@code String} to move the cursor to the X offset.
      */
     protected String moveToXOffset() {
-        return GConsole.CC_CR + GConsole.cursorRight(getXOffset());
+        return com.glitchybyte.glib.console.GConsole.CC_CR + com.glitchybyte.glib.console.GConsole.cursorRight(getXOffset());
     }
 
     /**
@@ -121,9 +123,9 @@ public abstract class GPanel {
     protected abstract String createImprint();
 
     /**
-     * Signals this panel's contents have changed and needs to be redrawn.
+     * Signals this panel's contents have changed and needs to be refreshed.
      */
-    protected void signalDirty() {
+    public void signalDirty() {
         rootPanel.signalDirty(this);
     }
 
@@ -132,7 +134,14 @@ public abstract class GPanel {
      */
     public void refresh() {
         imprint = createImprint();
-        panels.forEach(GPanel::refresh);
+    }
+
+    /**
+     * Refreshes this panel and all its children.
+     */
+    public void refreshAll() {
+        refresh();
+        panels.forEach(GPanel::refreshAll);
     }
 
     /**
@@ -140,10 +149,10 @@ public abstract class GPanel {
      */
     protected void drawPanel() {
         final int yOffset = getYOffset();
-        GConsole.print(GConsole.resetColor());
-        GConsole.print(GConsole.cursorDown(yOffset));
-        GConsole.print(imprint);
-        GConsole.print(GConsole.cursorUp(yOffset));
+        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.resetColor());
+        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.cursorDown(yOffset));
+        com.glitchybyte.glib.console.GConsole.print(imprint);
+        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.cursorUp(yOffset));
         panels.forEach(GPanel::drawPanel);
     }
 
@@ -159,15 +168,15 @@ public abstract class GPanel {
         final String ch = Character.toString(glyph);
         final StringBuilder sb = new StringBuilder();
         if (fgColor != null) {
-            sb.append(GConsole.foregroundColor(fgColor));
+            sb.append(com.glitchybyte.glib.console.GConsole.foregroundColor(fgColor));
         }
         if (bgColor != null) {
-            sb.append(GConsole.backgroundColor(bgColor));
+            sb.append(com.glitchybyte.glib.console.GConsole.backgroundColor(bgColor));
         }
         for (int i = 0; i < height; ++i) {
             sb.append(moveToXOffset());
             sb.append(ch.repeat(width));
-            sb.append(GConsole.cursorDown(1));
+            sb.append(com.glitchybyte.glib.console.GConsole.cursorDown(1));
         }
         sb.append(GConsole.cursorUp(height));
         return sb.toString();

@@ -1,15 +1,27 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console;
+package com.glitchybyte.glib.console.display;
 
 import com.glitchybyte.glib.GStrings;
-import com.glitchybyte.glib.concurrent.GAsyncWorkQueue;
+import com.glitchybyte.glib.concurrent.workqueue.GAsyncWorkQueue;
+import com.glitchybyte.glib.console.GConsole;
 
 /**
  * Console UI root panel that contains all other panels.
  */
 public abstract class GRootPanel extends GPanel {
+
+    private static final GDisplayDataTask DATA = new GDisplayDataTask();
+
+    /**
+     * Returns an object to read and write data for the display.
+     *
+     * @return An object to read and write data for the display.
+     */
+    public static GDisplayDataTask getData() {
+        return DATA;
+    }
 
     private final GAsyncWorkQueue<GPanel> dirtyPanels = new GAsyncWorkQueue<>();
 
@@ -43,8 +55,13 @@ public abstract class GRootPanel extends GPanel {
         dirtyPanels.doWork(GPanel::refresh);
     }
 
-    void signalDirty(final GPanel panel) {
-        dirtyPanels.queueWork(panel);
+    /**
+     * Signals the given panel's contents have changed and needs to be refreshed.
+     *
+     * @param panel Panel that needs to be refreshed.
+     */
+    public void signalDirty(final GPanel panel) {
+        dirtyPanels.addWork(panel);
     }
 
     /**

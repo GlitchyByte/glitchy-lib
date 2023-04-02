@@ -4,9 +4,9 @@
 package com.glitchybyte.glib.concurrent;
 
 import java.time.Duration;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,25 +22,50 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class GConcurrentTask implements Runnable {
 
+    private static final AtomicLong taskCount = new AtomicLong(0);
+
+    private GTaskRunner taskRunner = null;
     private final String taskThreadName;
     private final AtomicBoolean hasStarted = new AtomicBoolean(false);
     private final Lock hasStartedLock = new ReentrantLock();
     private final Condition hasStartedSignal = hasStartedLock.newCondition();
 
     /**
-     * Creates a concurrent task with the given name.
+     * Sets the task runner this task can use to run other tasks.
+     * On start, it defaults to the runner that is running this task.
      *
-     * @param taskThreadName Thread name.
+     * @param taskRunner Task runner.
      */
-    public GConcurrentTask(final String taskThreadName) {
-        this.taskThreadName = taskThreadName;
+    protected void setTaskRunner(final GTaskRunner taskRunner) {
+        this.taskRunner = taskRunner;
     }
 
     /**
-     * Creates a concurrent task with a random name of the form 'Task-{RANDOM_NUMBER}'.
+     * Returns a task runner this task can use to run other tasks.
+     * On start, it defaults to the runner that is running this task.
+     *
+     * @return A task runner this task can use to run other tasks.
+     */
+    protected GTaskRunner getTaskRunner() {
+        return taskRunner;
+    }
+
+    /**
+     * Creates a concurrent task with the given name, or a default name if null.
+     *
+     * @param taskThreadName Thread name. If null, a default unique name of the form 'Task-{NUMBER}' is used.
+     */
+    public GConcurrentTask(final String taskThreadName) {
+        this.taskThreadName = taskThreadName == null ?
+                "Task-" + Long.toHexString(taskCount.incrementAndGet()) :
+                taskThreadName;
+    }
+
+    /**
+     * Creates a concurrent task with a default thread name.
      */
     public GConcurrentTask() {
-        this("Task-" + Integer.toHexString(new Random().nextInt()));
+        this(null);
     }
 
     /**

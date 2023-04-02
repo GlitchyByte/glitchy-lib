@@ -1,7 +1,7 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console;
+package com.glitchybyte.glib.console.display;
 
 import com.glitchybyte.glib.concurrent.GConcurrentTask;
 
@@ -18,15 +18,20 @@ public final class GConsoleDisplayTask extends GConcurrentTask {
      * @param rootPanel Root panel containing UI.
      */
     public GConsoleDisplayTask(final GRootPanel rootPanel) {
+        super("console-display");
         this.rootPanel = rootPanel;
     }
 
     @Override
     public void run() {
-        rootPanel.refresh();
-        rootPanel.draw();
-        started();
         try {
+            // Start data task.
+            getTaskRunner().start(GRootPanel.getData());
+            // Draw 1st imprint.
+            rootPanel.refreshAll();
+            rootPanel.draw();
+            started();
+            // Draw loop.
             while (!Thread.currentThread().isInterrupted()) {
                 rootPanel.awaitDirty();
                 rootPanel.refreshDirty();

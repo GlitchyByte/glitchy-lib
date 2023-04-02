@@ -1,11 +1,10 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.concurrent;
-
-import com.glitchybyte.glib.GArrays;
+package com.glitchybyte.glib.concurrent.workqueue;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,8 +13,9 @@ import java.util.function.Consumer;
 /**
  * A queue of work with the following characteristics:
  * <ul>
- *     <li>Queue work items from multiple threads with minimal lock contention.
- *     <li>Work is serviced separately from the queue. Allowing work to be
+ *     <li>Able to queue work items from multiple threads with minimal lock
+ *     contention.
+ *     <li>Work is serviced separately from the queue, allowing work to be
  *     performed without blocking the queue.
  * </ul>
  *
@@ -23,10 +23,10 @@ import java.util.function.Consumer;
  */
 public final class GAsyncWorkQueue<T> {
 
-    private final LinkedList<T> queue = new LinkedList<>();
+    private final List<T> queue = new LinkedList<>();
     private final Lock queueLock = new ReentrantLock();
     private final Condition itemQueued = queueLock.newCondition();
-    private T[] workItems = null;
+    private final List<T> workItems = new LinkedList<>();
     private final Lock workLock = new ReentrantLock();
 
     /**
@@ -37,11 +37,11 @@ public final class GAsyncWorkQueue<T> {
     }
 
     /**
-     * Queues a work item.
+     * Adds a work item to the queue.
      *
      * @param item Work item.
      */
-    public void queueWork(final T item) {
+    public void addWork(final T item) {
         if (item == null) {
             throw new IllegalArgumentException("Work item cannot be null!");
         }
@@ -57,6 +57,8 @@ public final class GAsyncWorkQueue<T> {
     /**
      * Awaits for work to be queued.
      *
+     * <p>{@code awaitWork} and {@code doWork} must be called on the same thread.
+     *
      * @throws InterruptedException If the thread is interrupted while awaiting.
      */
     public void awaitWork() throws InterruptedException {
@@ -67,11 +69,8 @@ public final class GAsyncWorkQueue<T> {
             }
             if (workLock.tryLock()) {
                 try {
-                    final int count = queue.size();
-                    workItems = GArrays.createArray(count);
-                    for (int i = 0; i < count; ++i) {
-                        workItems[i] = queue.removeFirst();
-                    }
+                    workItems.addAll(queue);
+                    queue.clear();
                 } finally {
                     workLock.unlock();
                 }
@@ -84,18 +83,18 @@ public final class GAsyncWorkQueue<T> {
     /**
      * Performs work on every item queued.
      *
+     * <p>{@code awaitWork} and {@code doWork} must be called on the same thread.
+     *
      * @param itemConsumer Consumer that performs work on items.
      */
     public void doWork(final Consumer<T> itemConsumer) {
         workLock.lock();
-        if (workItems == null) {
-            return;
-        }
         try {
-            for (final T item: workItems) {
-                itemConsumer.accept(item);
+            if (workItems.isEmpty()) {
+                return;
             }
-            workItems = null;
+            workItems.forEach(itemConsumer);
+            workItems.clear();
         } finally {
             workLock.unlock();
         }
