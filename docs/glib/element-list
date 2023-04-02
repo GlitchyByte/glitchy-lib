@@ -1,9 +1,12 @@
 com.glitchybyte.glib
 com.glitchybyte.glib.cache
 com.glitchybyte.glib.combinatorics
+com.glitchybyte.glib.concurrent
+com.glitchybyte.glib.concurrent.eventhandler
+com.glitchybyte.glib.concurrent.workqueue
 com.glitchybyte.glib.console
+com.glitchybyte.glib.console.display
 com.glitchybyte.glib.function
 com.glitchybyte.glib.json
 com.glitchybyte.glib.log
 com.glitchybyte.glib.process
-com.glitchybyte.glib.wrapped
