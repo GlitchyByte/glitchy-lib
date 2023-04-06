@@ -3,12 +3,12 @@
 
 package com.glitchybyte.glib.console.display;
 
-import com.glitchybyte.glib.concurrent.GConcurrentTask;
+import com.glitchybyte.glib.concurrent.GTask;
 
 /**
  * Convenience task to setup a console UI.
  */
-public final class GConsoleDisplayTask extends GConcurrentTask {
+public final class GConsoleDisplayTask extends GTask {
 
     private final GRootPanel rootPanel;
 

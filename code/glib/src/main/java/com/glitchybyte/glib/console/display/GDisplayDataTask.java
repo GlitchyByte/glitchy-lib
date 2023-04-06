@@ -4,7 +4,7 @@
 package com.glitchybyte.glib.console.display;
 
 import com.glitchybyte.glib.GObjects;
-import com.glitchybyte.glib.concurrent.GConcurrentTask;
+import com.glitchybyte.glib.concurrent.GTask;
 import com.glitchybyte.glib.concurrent.GLock;
 import com.glitchybyte.glib.concurrent.workqueue.GWorkQueue;
 import com.glitchybyte.glib.concurrent.workqueue.GWorkQueueTask;
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Task to handle data for panels in a generic way.
  */
-public final class GDisplayDataTask extends GConcurrentTask {
+public final class GDisplayDataTask extends GTask {
 
     private static final class PanelData {
 

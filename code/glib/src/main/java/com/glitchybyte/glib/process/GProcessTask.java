@@ -1,20 +1,24 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.process;
 
+import com.glitchybyte.glib.concurrent.GLock;
+import com.glitchybyte.glib.concurrent.GTask;
+
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * An encapsulation that represents and manages a system process.
  */
-public final class GProcess implements Callable<Integer> {
+public final class GProcessTask extends GTask {
 
     /**
      * Process state.
@@ -51,9 +55,11 @@ public final class GProcess implements Callable<Integer> {
     private final int maxOutputBufferLines;
     private final boolean autoPrintOutput;
     private State state = State.CREATED;
-    private ExecutorService outputCollectorExecutor;
     private Process process;
-    private GProcessOutputCollector outputCollector;
+    private final Lock processLock = new ReentrantLock();
+    private final Condition processStateChanged = processLock.newCondition();
+    private GProcessOutputCollectorTask outputCollector;
+    private Integer statusCode = null;
 
     /**
      * Creates a process from the given command and starting directory.
@@ -62,7 +68,7 @@ public final class GProcess implements Callable<Integer> {
      * @param dir Starting directory. If null, it will inherit the current process current directory.
      * @param maxOutputBufferLines Max lines to keep in memory from console output of this process.
      */
-    public GProcess(final String[] command, final Path dir, final int maxOutputBufferLines) {
+    public GProcessTask(final String[] command, final Path dir, final int maxOutputBufferLines) {
         this.command = command;
         this.dir = dir;
         this.maxOutputBufferLines = maxOutputBufferLines;
@@ -77,7 +83,7 @@ public final class GProcess implements Callable<Integer> {
      * @param autoPrintOutput This convenience parameter makes it so output of the process gets continually printed to
      *                        the current process' console.
      */
-    public GProcess(final String[] command, final Path dir, final boolean autoPrintOutput) {
+    public GProcessTask(final String[] command, final Path dir, final boolean autoPrintOutput) {
         this.command = command;
         this.dir = dir;
         this.maxOutputBufferLines = autoPrintOutput ? 1_000 : 0;
@@ -90,7 +96,7 @@ public final class GProcess implements Callable<Integer> {
      * @param command Array representing the parts of the command.
      * @param dir Starting directory. If null, it will inherit the current process current directory.
      */
-    public GProcess(final String[] command, final Path dir) {
+    public GProcessTask(final String[] command, final Path dir) {
         this(command, dir, false);
     }
 
@@ -100,7 +106,7 @@ public final class GProcess implements Callable<Integer> {
      *
      * @param command Array representing the parts of the command.
      */
-    public GProcess(final String[] command) {
+    public GProcessTask(final String[] command) {
         this(command, null);
     }
 
@@ -109,53 +115,61 @@ public final class GProcess implements Callable<Integer> {
      *
      * @return The process handle to query for other information about the process.
      */
-    public synchronized ProcessHandle getProcessHandle() {
-        return process.toHandle();
+    public ProcessHandle getProcessHandle() {
+        return GLock.lockedResult(processLock, process::toHandle);
     }
 
-    /**
-     * Spawns and starts the process, waiting for its termination on a separate thread.
-     *
-     * @return The process exit code.
-     */
     @Override
-    public Integer call() {
-        synchronized (this) {
+    public void run() {
+        processLock.lock();
+        try {
             final ProcessBuilder pb = GOSInterface.instance.createProcessBuilder(command, dir);
             try {
                 process = pb.start();
             } catch (final IOException e) {
                 process = null;
                 outputCollector = null;
-                return null;
+                return;
             }
-            outputCollectorExecutor = Executors.newSingleThreadExecutor();
-            outputCollector = new GProcessOutputCollector(process, maxOutputBufferLines);
-            outputCollectorExecutor.submit(outputCollector);
+            outputCollector = new GProcessOutputCollectorTask(process, maxOutputBufferLines);
+            getTaskRunner().start(outputCollector);
             setState(State.STARTED);
+        } catch (final InterruptedException e) {
+            setState(State.CANCELED);
+            return;
+        } finally {
+            processLock.unlock();
+            started();
         }
         try {
             if (autoPrintOutput) {
                 while ((state == State.STARTED) && process.isAlive()) {
-                    // We wait 1s to capture any output before printing.
+                    // We wait half a second to capture any output before printing.
                     // We are busy waiting, but I haven't figured out how else to wait for output.
                     //noinspection BusyWait
-                    Thread.sleep(1_000);
+                    Thread.sleep(500);
                     printOutput();
                 }
-                final int statusCode = process.waitFor();
+                statusCode = process.waitFor();
                 printOutput();
                 setState(State.STOPPED);
-                return statusCode;
             } else {
-                final int statusCode = process.waitFor();
+                statusCode = process.waitFor();
                 setState(State.STOPPED);
-                return statusCode;
             }
         } catch (final InterruptedException e) {
+            stop();
             setState(State.CANCELED);
-            return null;
         }
+    }
+
+    /**
+     * Returns the status code of the finished process, or null if the process was interrupted.
+     *
+     * @return The status code of the finished process, or null if the process was interrupted.
+     */
+    public Integer getStatusCode() {
+        return statusCode;
     }
 
     /**
@@ -169,17 +183,21 @@ public final class GProcess implements Callable<Integer> {
      *
      * @param pid Pid of the descendant process to stop.
      */
-    public synchronized void stop(final long pid) {
-        if (state != State.STARTED) {
-            return;
+    public void stop(final long pid) {
+        processLock.lock();
+        try {
+            if (state != State.STARTED) {
+                return;
+            }
+            final boolean isDescendant = process.descendants().anyMatch(processHandle -> pid == processHandle.pid());
+            if (!isDescendant) {
+                throw new IllegalArgumentException("pid is not a descendant of this process.");
+            }
+            GOSInterface.instance.sendSignalINT(pid);
+            setState(State.STOPPING);
+        } finally {
+            processLock.unlock();
         }
-        final boolean isDescendant = process.descendants().anyMatch(processHandle -> pid == processHandle.pid());
-        if (!isDescendant) {
-            throw new IllegalArgumentException("pid is not a descendant of this process.");
-        }
-        GOSInterface.instance.sendSignalINT(pid);
-        outputCollectorExecutor.shutdown();
-        setState(State.STOPPING);
     }
 
     /**
@@ -187,8 +205,8 @@ public final class GProcess implements Callable<Integer> {
      *
      * <p>The implementation will send a SIGINT.
      */
-    public synchronized void stop() {
-        stop(process.pid());
+    public void stop() {
+        GLock.locked(processLock, () -> stop(process.pid()));
     }
 
     /**
@@ -196,39 +214,42 @@ public final class GProcess implements Callable<Integer> {
      *
      * @return The process state.
      */
-    public synchronized State getState() {
-        return state;
+    public State getState() {
+        return GLock.lockedResult(processLock, () -> state);
     }
 
-    private synchronized void setState(final State state) {
-        this.state = state;
-        notifyAll();
-    }
-
-    /**
-     * Convenience method to wait until a given state is reached.
-     *
-     * @param state Wanted state.
-     * @param timeoutMillis Time to wait for state.
-     * @return True if the state has been reached.
-     * @throws InterruptedException If the wait was interrupted.
-     */
-    public synchronized boolean waitForState(final State state, final long timeoutMillis) throws InterruptedException {
-        while (this.state != state) {
-            wait();
-        }
-        return true;
+    private void setState(final State state) {
+        GLock.locked(processLock, () -> {
+            this.state = state;
+            processStateChanged.signalAll();
+        });
     }
 
     /**
-     * Convenience method to wait indefinitely until a given state is reached.
+     * Wait until a given state is reached or timeout expires.
      *
      * @param state Wanted state.
+     * @param timeout Time to wait for state.
      * @return True if the state has been reached.
      * @throws InterruptedException If the wait was interrupted.
      */
-    public synchronized boolean waitForState(final State state) throws InterruptedException {
-        return waitForState(state, 0);
+    public boolean awaitForState(final State state, final Duration timeout) throws InterruptedException {
+        return GLock.awaitConditionWithTestAndTimeout(processLock, processStateChanged,
+                () -> this.state == state,
+                timeout
+        );
+    }
+
+    /**
+     * Wait indefinitely until a given state is reached.
+     *
+     * @param state Wanted state.
+     * @throws InterruptedException If the wait was interrupted.
+     */
+    public void awaitForState(final State state) throws InterruptedException {
+        GLock.awaitConditionWithTest(processLock, processStateChanged,
+                () -> this.state == state
+        );
     }
 
     /**

@@ -4,9 +4,7 @@
 package com.glitchybyte.glib.concurrent;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,15 +18,33 @@ import java.util.concurrent.locks.ReentrantLock;
  * acquiring locks). Repeated calls to {@code started} are permitted and will
  * return fast without performing any further synchronization.
  */
-public abstract class GConcurrentTask implements Runnable {
-
-    private static final AtomicLong taskCount = new AtomicLong(0);
+public abstract class GTask implements Runnable {
 
     private GTaskRunner taskRunner = null;
+    private Thread taskThread = null;
     private final String taskThreadName;
     private final AtomicBoolean hasStarted = new AtomicBoolean(false);
     private final Lock hasStartedLock = new ReentrantLock();
     private final Condition hasStartedSignal = hasStartedLock.newCondition();
+    private final AtomicBoolean isDone = new AtomicBoolean(false);
+    private final Lock isDoneLock = new ReentrantLock();
+    private final Condition isDoneSignal = isDoneLock.newCondition();
+
+    /**
+     * Creates a concurrent task with the given name, or a default name if null.
+     *
+     * @param taskThreadName Thread name. If null, a default unique name of the form 'Task-{NUMBER}' is used.
+     */
+    public GTask(final String taskThreadName) {
+        this.taskThreadName = taskThreadName;
+    }
+
+    /**
+     * Creates a concurrent task with a default thread name.
+     */
+    public GTask() {
+        this(null);
+    }
 
     /**
      * Sets the task runner this task can use to run other tasks.
@@ -51,21 +67,14 @@ public abstract class GConcurrentTask implements Runnable {
     }
 
     /**
-     * Creates a concurrent task with the given name, or a default name if null.
+     * Returns the given name of this task thread, or null if it wasn't set.
+     * If name is not set the runner will assign a default name when creating
+     * the thread.
      *
-     * @param taskThreadName Thread name. If null, a default unique name of the form 'Task-{NUMBER}' is used.
+     * @return The given name of this task thread.
      */
-    public GConcurrentTask(final String taskThreadName) {
-        this.taskThreadName = taskThreadName == null ?
-                "Task-" + Long.toHexString(taskCount.incrementAndGet()) :
-                taskThreadName;
-    }
-
-    /**
-     * Creates a concurrent task with a default thread name.
-     */
-    public GConcurrentTask() {
-        this(null);
+    public String getTaskThreadName() {
+        return taskThreadName;
     }
 
     /**
@@ -81,8 +90,38 @@ public abstract class GConcurrentTask implements Runnable {
         if (!hasStarted.compareAndSet(false, true)) {
             return;
         }
-        Thread.currentThread().setName(taskThreadName);
+        taskThread = Thread.currentThread();
         GLock.signalAll(hasStartedLock, hasStartedSignal);
+    }
+
+    void done() {
+        isDone.compareAndSet(false, true);
+        GLock.signalAll(isDoneLock, isDoneSignal);
+    }
+
+    /**
+     * Returns whether this task has completed.
+     *
+     * @return Whether this task has completed.
+     */
+    public boolean isDone() {
+        return isDone.get();
+    }
+
+    /**
+     * Awaits indefinitely until the task is done.
+     *
+     * @throws InterruptedException If the wait was interrupted.
+     */
+    public void awaitDone() throws InterruptedException {
+        GLock.awaitConditionWithTest(isDoneLock, isDoneSignal, this::isDone);
+    }
+
+    /**
+     * Interrupts the task.
+     */
+    public void interrupt() {
+        taskThread.interrupt();
     }
 
     /**
@@ -96,15 +135,8 @@ public abstract class GConcurrentTask implements Runnable {
      * @throws InterruptedException If the wait is interrupted.
      */
     void awaitStarted(final Duration timeout) throws InterruptedException {
-        hasStartedLock.lock();
-        try {
-            while (!hasStarted.get()) {
-                if (!hasStartedSignal.await(timeout.toMillis(), TimeUnit.MILLISECONDS)) {
-                    throw new IllegalStateException("Task did not start within the timeout. Did you forget to call 'started'?");
-                }
-            }
-        } finally {
-            hasStartedLock.unlock();
+        if (!GLock.awaitConditionWithTestAndTimeout(hasStartedLock, hasStartedSignal, hasStarted::get, timeout)) {
+            throw new IllegalStateException("Task did not start within the timeout. Did you forget to call 'started'?");
         }
     }
 }

@@ -3,16 +3,16 @@
 
 package com.glitchybyte.glib.concurrent.workqueue;
 
-import com.glitchybyte.glib.concurrent.GConcurrentTask;
+import com.glitchybyte.glib.concurrent.GTask;
 
 import java.util.function.Consumer;
 
 /**
- * A base task implementation of a {code GAsyncWorkQueue}.
+ * A base task implementation of a {@code GAsyncWorkQueue}.
  *
  * @param <T> Type of work item.
  */
-public abstract class GWorkQueueTask<T> extends GConcurrentTask implements GWorkQueue<T> {
+public abstract class GWorkQueueTask<T> extends GTask implements GWorkQueue<T> {
 
     /**
      * Work queue.

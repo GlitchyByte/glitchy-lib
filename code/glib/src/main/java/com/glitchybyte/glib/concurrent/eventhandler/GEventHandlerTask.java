@@ -3,7 +3,7 @@
 
 package com.glitchybyte.glib.concurrent.eventhandler;
 
-import com.glitchybyte.glib.concurrent.GConcurrentTask;
+import com.glitchybyte.glib.concurrent.GTask;
 import com.glitchybyte.glib.concurrent.GLock;
 import com.glitchybyte.glib.concurrent.workqueue.GWorkQueue;
 import com.glitchybyte.glib.concurrent.workqueue.GWorkQueueTask;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * <p>Designed to broadcast events in a single worker thread, but without
  * blocking the event receiver queue.
  */
-public final class GEventHandlerTask extends GConcurrentTask implements GEventHandler {
+public final class GEventHandlerTask extends GTask implements GEventHandler {
 
     private final Map<String, Collection<Consumer<GEvent>>> handlers = new HashMap<>();
     private final ReadWriteLock handlersLock = new ReentrantReadWriteLock();
