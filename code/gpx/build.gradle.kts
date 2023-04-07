@@ -7,7 +7,7 @@ plugins {
 
 // Build info.
 group = "com.glitchybyte.gpx"
-version = "1.2.0"
+version = "1.2.1"
 
 application {
     // Define the main class for the application.

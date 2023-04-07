@@ -51,7 +51,7 @@ my_var=$(./gen-code MY_SALT)
 
 ---
 ## Application runner
-![Version](https://img.shields.io/badge/Version-1.2.0-blue)
+![Version](https://img.shields.io/badge/Version-1.2.1-blue)
 
 Builds, unpacks, and runs a Gradle project on the current console, as opposed to the Gradle run task which doesn't attach a proper console. This runner works on macOS, Linux, and Windows.
 
