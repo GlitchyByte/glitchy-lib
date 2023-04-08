@@ -1,4 +1,4 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
 plugins {
@@ -17,10 +17,10 @@ java {
 
 testing {
     suites.withType(JvmTestSuite::class) {
-        useJUnitJupiter("5.8.2")
+        useJUnitJupiter("5.9.2")
     }
 }
 
 tasks.withType<Test>().configureEach {
-    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+    maxParallelForks = Runtime.getRuntime().availableProcessors().takeIf { it > 0 } ?: 1
 }
