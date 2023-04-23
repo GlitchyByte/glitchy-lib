@@ -1,4 +1,4 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
 plugins {
@@ -7,7 +7,7 @@ plugins {
 
 // Build info.
 group = "com.glitchybyte.gpx"
-version = "1.2.1"
+version = "1.2.2"
 
 application {
     // Define the main class for the application.
