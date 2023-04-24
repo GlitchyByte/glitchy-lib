@@ -1,3 +1,6 @@
+:: Copyright 2022-2023 GlitchyByte
+:: SPDX-License-Identifier: Apache-2.0
+
 :: Run app!
 
 @echo off

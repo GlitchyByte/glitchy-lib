@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Copyright 2021-2022 GlitchyByte
+# Copyright 2021-2023 GlitchyByte
 # SPDX-License-Identifier: Apache-2.0
 
-# gen-code v1.0.0
+# gen-code v1.0.1
+set -u
 
 # Generate a time-based code.
 # Unique per project as long as it's used with the same salt.
-salt=$1
+readonly salt=$1
 
 # ---- BEGIN SECTION ----
 # CRC32 in bash.
@@ -42,23 +43,23 @@ crc32_string() {
 # ---- END SECTION ----
 
 # Seed random with salt.
-RANDOM=$(crc32_string "$salt")
+readonly RANDOM=$(crc32_string "$salt")
 
 # Define character set.
 # charset='0123456789abcdefghijklmnopqrstuvwxyz'
-charset='bcdfghjkmpqrstvwx246789'
-charset_length=${#charset}
+readonly charset='bcdfghjkmpqrstvwx246789'
+readonly charset_length=${#charset}
 
 # Get time in seconds.
 # We'll be using 30 bits only (over 30 years time) as it is enough for the lifetime of anybody reasonably using this.
 # If it's the year 2050 and you are still using this, you took a wrong turn in life. Increase bit_count, or reset zero_time.
-zero_time=1609459200 # First instant of 2021.
-bit_count=30
-max_bit=$((bit_count - 1))
-timestamp=$((($(date +%s) - zero_time) & (2**bit_count - 1)))
+readonly zero_time=1609459200 # First instant of 2021.
+readonly bit_count=30
+readonly max_bit=$((bit_count - 1))
+readonly timestamp=$((($(date +%s) - zero_time) & (2**bit_count - 1)))
 
 # Scramble bits.
-bit_seq=$(seq 0 $max_bit)
+readonly bit_seq=$(seq 0 $max_bit)
 scrambled_bits=($bit_seq)
 for i in $(seq $max_bit -1 1); do
   rnd=$((RANDOM%(i + 1)))
@@ -81,7 +82,7 @@ done
 # Convert number to base charset_length.
 # indexes="$(echo "ibase=10; obase=16; $scrambled_stamp" | bc)"
 # echo $indexes
-indexes="$(echo "ibase=10; obase=$charset_length; $scrambled_stamp" | bc)"
+readonly indexes="$(echo "ibase=10; obase=$charset_length; $scrambled_stamp" | bc)"
 
 # Translate digits into charset.
 code=''

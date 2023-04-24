@@ -5,15 +5,16 @@
 # Makes run jar and completes wrapper.
 
 # [Setup]
+set -u
 # Capture caller directory and script directory.
-calling_dir="$(pwd)"
-script_dir="$(cd "$(dirname "$0")" && pwd)"
+readonly calling_dir="$(pwd)"
+readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Go to script directory and load utilities.
 cd "${script_dir}"
 . ./gscript
 
 # [Main]
-project="gpx"
+readonly project="gpx"
 
 # Clean, build, and run tests.
 cd "${script_dir}/code"
@@ -28,4 +29,5 @@ fi
 cd "${script_dir}"
 cp code/gpx/build/libs/gpx.jar artifacts/run/
 
+# [Teardown]
 cd "${calling_dir}"

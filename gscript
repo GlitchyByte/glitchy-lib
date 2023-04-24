@@ -1,37 +1,37 @@
 #!/usr/bin/env bash
-# Copyright 2022 GlitchyByte
+# Copyright 2022-2023 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
 # Script utilites.
 
 # Color control.
-c_reset=$(tput sgr0)
-c_bold=$(tput bold)
+readonly c_reset=$(tput sgr0)
+readonly c_bold=$(tput bold)
 # Foreground colors.
-cf_black=$(tput setaf 0)
-cf_red=$(tput setaf 1)
-cf_green=$(tput setaf 2)
-cf_yellow=$(tput setaf 3)
-cf_blue=$(tput setaf 4)
-cf_magenta=$(tput setaf 5)
-cf_cyan=$(tput setaf 6)
-cf_white=$(tput setaf 7)
+readonly cf_black=$(tput setaf 0)
+readonly cf_red=$(tput setaf 1)
+readonly cf_green=$(tput setaf 2)
+readonly cf_yellow=$(tput setaf 3)
+readonly cf_blue=$(tput setaf 4)
+readonly cf_magenta=$(tput setaf 5)
+readonly cf_cyan=$(tput setaf 6)
+readonly cf_white=$(tput setaf 7)
 # Background colors.
-cb_black=$(tput setab 0)
-cb_red=$(tput setab 1)
-cb_green=$(tput setab 2)
-cb_yellow=$(tput setab 3)
-cb_blue=$(tput setab 4)
-cb_magenta=$(tput setab 5)
-cb_cyan=$(tput setab 6)
-cb_white=$(tput setab 7)
+readonly cb_black=$(tput setab 0)
+readonly cb_red=$(tput setab 1)
+readonly cb_green=$(tput setab 2)
+readonly cb_yellow=$(tput setab 3)
+readonly cb_blue=$(tput setab 4)
+readonly cb_magenta=$(tput setab 5)
+readonly cb_cyan=$(tput setab 6)
+readonly cb_white=$(tput setab 7)
 
 # Custom colors.
-cc_title=${c_reset}$(tput setab 236)$(tput setaf 231)
-cc_item=${c_reset}$(tput setaf 216)
-cc_description=${c_reset}$(tput setaf 111)
-cc_highlight=${c_reset}$(tput setaf 231)
-cc_error=${c_reset}$(tput setaf 197)
+readonly cc_title=${c_reset}$(tput setab 236)$(tput setaf 231)
+readonly cc_item=${c_reset}$(tput setaf 216)
+readonly cc_description=${c_reset}$(tput setaf 111)
+readonly cc_highlight=${c_reset}$(tput setaf 231)
+readonly cc_error=${c_reset}$(tput setaf 197)
 
 # Echo to stderr.
 echoerr() {
