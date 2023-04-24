@@ -87,10 +87,11 @@ public abstract class GTask implements Runnable {
      * without performing any further synchronization.
      */
     protected void started() {
-        if (!hasStarted.compareAndSet(false, true)) {
+        if (hasStarted.get()) {
             return;
         }
         taskThread = Thread.currentThread();
+        hasStarted.set(true);
         GLock.signalAll(hasStartedLock, hasStartedSignal);
     }
 
