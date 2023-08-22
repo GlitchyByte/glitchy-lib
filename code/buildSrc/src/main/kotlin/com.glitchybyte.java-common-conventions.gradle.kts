@@ -11,13 +11,13 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(19))
+        languageVersion.set(JavaLanguageVersion.of(20))
     }
 }
 
 testing {
     suites.withType(JvmTestSuite::class) {
-        useJUnitJupiter("5.9.2")
+        useJUnitJupiter("5.9.3")
     }
 }
 
