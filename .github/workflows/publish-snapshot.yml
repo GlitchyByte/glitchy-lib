@@ -1,0 +1,71 @@
+name: glib-snapshot-publisher
+run-name: Publishing a snapshot of glib library
+on:
+  workflow_dispatch:
+env:
+  JAVA_VERSION: 20
+  GRADLE_VERSION: 8.3
+  PROJECT_NAME: glib
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+    outputs:
+      snapshot: ${{ steps.snapshot-test.outputs.snapshot }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+
+      - name: Snapshot test
+        id: snapshot-test
+        run: |
+          version=$(<"${{ github.workspace }}/code/${{ env.PROJECT_NAME }}/src/main/resources/version")
+          if [[ "${version}" == *"-SNAPSHOT" ]]; then
+            echo "snapshot=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "snapshot=false" >> "${GITHUB_OUTPUT}"
+            echo "dev only releases snapshots!"
+            exit 1
+          fi
+
+      - name: Setup runner
+        uses: ./.github/actions/setup-java-runner
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Build
+        run: gradle :${{ env.PROJECT_NAME }}:build
+
+      - name: Test
+        run: gradle :${{ env.PROJECT_NAME }}:test
+
+  deploy-gradle-artifact:
+    needs: build-project
+    if: ${{ needs.build-project.outputs.snapshot == 'true' }}
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup runner
+        uses: ./.github/actions/setup-java-runner
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Recreate GPG keys
+        run: echo "${{ secrets.GPG_KEYS_BASE64 }}" | base64 -d > "${{ github.workspace }}/gpg-keys"
+
+      - name: Publish
+        run: |
+          gradle \
+            "-Pgpr.username=${{ github.actor }}" \
+            "-Pgpr.token=${{ secrets.GITHUB_TOKEN }}" \
+            "-Psigning.keyId=${{ secrets.GPG_KEY_ID }}" \
+            "-Psigning.password=${{ secrets.GPG_PASSWORD }}" \
+            "-Psigning.secretKeyRingFile=${{ github.workspace }}/gpg-keys" \
+            :${{ env.PROJECT_NAME }}:publish

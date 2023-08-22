@@ -1,0 +1,110 @@
+name: glib-publisher
+run-name: Publishing glib library
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "code/glib/src/main/resources/version"
+env:
+  JAVA_VERSION: 20
+  GRADLE_VERSION: 8.3
+  PROJECT_NAME: glib
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+    outputs:
+      snapshot: ${{ steps.snapshot-test.outputs.snapshot }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Snapshot test
+        id: snapshot-test
+        run: |
+          version=$(<"${{ github.workspace }}/code/${{ env.PROJECT_NAME }}/src/main/resources/version")
+          if [[ "${version}" == *"-SNAPSHOT" ]]; then
+            echo "snapshot=true" >> "${GITHUB_OUTPUT}"
+            echo "main doesn't release snapshots!"
+            exit 1
+          else
+            echo "snapshot=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Setup runner
+        uses: ./.github/actions/setup-java-runner
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Build
+        run: gradle :${{ env.PROJECT_NAME }}:build
+
+      - name: Test
+        run: gradle :${{ env.PROJECT_NAME }}:test
+
+  deploy-gradle-artifact:
+    needs: build-project
+    if: ${{ needs.build-project.outputs.snapshot == 'false' }}
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup runner
+        uses: ./.github/actions/setup-java-runner
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Recreate GPG keys
+        run: echo "${{ secrets.GPG_KEYS_BASE64 }}" | base64 -d > "${{ github.workspace }}/gpg-keys"
+
+      - name: Publish
+        run: |
+          gradle \
+            "-Pgpr.username=${{ github.actor }}" \
+            "-Pgpr.token=${{ secrets.GITHUB_TOKEN }}" \
+            "-Psigning.keyId=${{ secrets.GPG_KEY_ID }}" \
+            "-Psigning.password=${{ secrets.GPG_PASSWORD }}" \
+            "-Psigning.secretKeyRingFile=${{ github.workspace }}/gpg-keys" \
+            :${{ env.PROJECT_NAME }}:publish
+
+  deploy-pages:
+    needs: build-project
+    if: ${{ needs.build-project.outputs.snapshot == 'false' }}
+    permissions:
+      id-token: write
+      pages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup runner
+        uses: ./.github/actions/setup-java-runner
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Create javadoc
+        run: gradle :${{ env.PROJECT_NAME }}:javadoc
+
+      - name: Replace fonts in javadoc
+        run: |
+          sed -i -E \
+            -e "s|^@import url\(.*\);|@import url('https://fonts.googleapis.com/css2?family=Exo+2\&family=JetBrains+Mono\&display=swap');|" \
+            -e "s/'DejaVu (Sans|Serif)'/'Exo 2'/" \
+            -e "s/'DejaVu Sans Mono'/'JetBrains Mono'/" \
+            "${{ env.PROJECT_NAME }}/build/docs/javadoc/stylesheet.css"
+
+      - name: Prepare Pages
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ${{ env.PROJECT_NAME }}/build/docs/javadoc
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v2
