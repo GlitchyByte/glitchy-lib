@@ -20,7 +20,8 @@ jobs:
       - name: Snapshot test
         id: snapshot-test
         run: |
-          version=$(<"${{ github.workspace }}/code/${{ env.PROJECT_NAME }}/src/main/resources/version")
+          cd code
+          version=$(<"${{ env.PROJECT_NAME }}/src/main/resources/version")
           if [[ "${version}" == *"-SNAPSHOT" ]]; then
             echo "snapshot=true" >> "${GITHUB_OUTPUT}"
           else
@@ -36,10 +37,14 @@ jobs:
           gradle-version: ${{ env.GRADLE_VERSION }}
 
       - name: Build
-        run: gradle :${{ env.PROJECT_NAME }}:build
+        run: |
+          cd code
+          gradle :${{ env.PROJECT_NAME }}:build
 
       - name: Test
-        run: gradle :${{ env.PROJECT_NAME }}:test
+        run: |
+          cd code
+          gradle :${{ env.PROJECT_NAME }}:test
 
   deploy-gradle-artifact:
     needs: build-project
@@ -62,6 +67,7 @@ jobs:
 
       - name: Publish
         run: |
+          cd code
           gradle \
             "-Pgpr.username=${{ github.actor }}" \
             "-Pgpr.token=${{ secrets.GITHUB_TOKEN }}" \
