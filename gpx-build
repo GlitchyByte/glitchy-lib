@@ -11,7 +11,7 @@ readonly calling_dir="$(pwd)"
 readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Go to script directory and load utilities.
 cd "${script_dir}"
-. ./gscript
+. ./_gscript
 
 # [Main]
 readonly project="gpx"

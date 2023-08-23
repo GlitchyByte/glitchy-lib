@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2022 GlitchyByte
+# Copyright 2022-2023 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
 # Makes run jar and completes wrapper.
@@ -11,7 +11,7 @@ readonly calling_dir="$(pwd)"
 readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Go to script directory and load utilities.
 cd "${script_dir}"
-. ./gscript
+. ./_gscript
 
 # [Main]
 readonly project="gpx"

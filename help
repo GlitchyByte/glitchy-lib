@@ -11,17 +11,20 @@ readonly calling_dir="$(pwd)"
 readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Go to script directory and load utilities.
 cd "${script_dir}"
-. ./gscript
+. ./_gscript
+
+# Custom colors.
+readonly cc_title=${c_reset}$(tput setab 236)$(tput setaf 231)
+readonly cc_item=${c_reset}$(tput setaf 216)
+readonly cc_description=${c_reset}$(tput setaf 111)
+readonly cc_highlight=${c_reset}$(tput setaf 231)
 
 # [Main]
 cd "${script_dir}"
-
-echo "${cc_title}  ----[ glib ]----  ${c_reset}"
-echo "${cc_item}  glib-build${cc_description}   Builds glib and generates javadocs.${c_reset}"
-echo "${cc_item}  glib-publish${cc_description} Publishes glib artifact to public repository.${c_reset}"
 
 echo "${cc_title}  ----[ gpx ]----  ${c_reset}"
 echo "${cc_item}  gpx-build${cc_description} Builds gpx.${c_reset}"
 echo "${cc_item}  gpx-make${cc_description}  Makes ${cc_highlight}run${cc_description} artifact.${c_reset}"
 
+# [Teardown]
 cd "${calling_dir}"
