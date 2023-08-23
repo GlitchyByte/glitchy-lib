@@ -1,4 +1,4 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -34,6 +34,20 @@ public final class GResources {
     public static String getResourceString(final Object context, final String resourceName) throws IOException {
         final InputStream inputStream = getResourceInputStream(context, resourceName);
         return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Retrieves version if built with standard GlitchyByte build scripts.
+     *
+     * @param context Any object within the context of the resource.
+     * @return Version as reported by build script.
+     */
+    public static String getVersion(final Object context) {
+        try {
+            return getResourceString(context, "version");
+        } catch (final IOException e) {
+            return null;
+        }
     }
 
     private GResources() {

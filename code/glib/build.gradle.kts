@@ -2,11 +2,24 @@
 // SPDX-License-Identifier: MIT-0
 
 plugins {
-    id("com.glitchybyte.java-public-published-library-conventions")
-    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.0"
+    id("com.glitchybyte.java-library-published-conventions")
 }
 
 publishing {
+    repositories {
+        maven {
+            // GitHub repository.
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/GlitchyByte/glitchy-kit")
+            credentials {
+                username = project.findProperty("gpr.username") as String?
+                password = project.findProperty("gpr.token") as String?
+            }
+            metadataSources {
+                gradleMetadata()
+            }
+        }
+    }
     publications {
         create<MavenPublication>("GLib") {
             from(components["java"])
@@ -30,9 +43,9 @@ signing {
 }
 
 dependencies {
-    api("com.google.code.gson:gson:2.10")
+    api("com.google.code.gson:gson:2.10.1")
 }
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.7.2"
+version = "1.7.3-SNAPSHOT"
