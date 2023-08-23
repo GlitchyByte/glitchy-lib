@@ -25,12 +25,7 @@ readonly cb_blue=$(tput setab 4)
 readonly cb_magenta=$(tput setab 5)
 readonly cb_cyan=$(tput setab 6)
 readonly cb_white=$(tput setab 7)
-
 # Custom colors.
-readonly cc_title=${c_reset}$(tput setab 236)$(tput setaf 231)
-readonly cc_item=${c_reset}$(tput setaf 216)
-readonly cc_description=${c_reset}$(tput setaf 111)
-readonly cc_highlight=${c_reset}$(tput setaf 231)
 readonly cc_error=${c_reset}$(tput setaf 197)
 
 # Echo to stderr.

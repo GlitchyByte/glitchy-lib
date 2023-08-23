@@ -1,28 +1,33 @@
 # Glitchy Kit
 
+![Java](https://img.shields.io/badge/Java-20-orange)
+
 Included in this repository are libraries and utilities common to many of my projects.
 
 This is a way of keeping my dependencies updated in one place and working together. It would be a bit cumbersome to keep them each in its own repository, and in sync with each other.
-
-![Java](https://img.shields.io/badge/Java-19-orange)
 
 ---
 ## GLib Java library
 ![Version](https://img.shields.io/badge/Version-1.7.2-blue)
 
 Classes and utilities for general development.
-[Read the javadocs!](https://glitchybyte.github.io/glitchy-kit/glib/)
+[Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
 
-To use in your own projects add it like this (Gradle Kotlin):
+To use in your own projects, make sure you have the appropriate information in your `gradle.properties`, and add the repository and dependency like this (Gradle Kotlin):
 
 ```kotlin
-plugins {
-    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.0"
-}
-
 repositories {
     maven {
-        url = uri("artifactregistry://us-west1-maven.pkg.dev/glitchybyte-cloud/public-maven")
+        // GitHub repository.
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/GlitchyByte/*")
+        credentials {
+            username = project.findProperty("gpr.username") as String?
+            password = project.findProperty("gpr.token") as String?
+        }
+        metadataSources {
+            gradleMetadata()
+        }
     }
 }
 
