@@ -164,8 +164,8 @@ public class GTaskRunnerTest {
 
         @Override
         public void run() {
-            started();
             items.add("one");
+            started();
         }
     }
 
