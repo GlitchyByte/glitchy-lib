@@ -30,8 +30,8 @@ java {
 tasks.compileJava {
     // Add version file to resources.
     doLast {
-        val versionFile = project.file("src/main/resources/version")
-        versionFile.writeText(project.version.toString())
+        val versionFile = project.file("${projectDir}/src/main/resources/version")
+        versionFile.writeText("${project.version}")
     }
 }
 
