@@ -75,3 +75,11 @@ jobs:
             "-Psigning.password=${{ secrets.GPG_PASSWORD }}" \
             "-Psigning.secretKeyRingFile=${{ github.workspace }}/gpg-keys" \
             :${{ env.PROJECT_NAME }}:publish
+
+      - name: Clean up old snapshots
+        uses: actions/delete-package-versions@v4
+        with:
+          package-name: com.glitchybyte.glib.glib
+          package-type: maven
+          min-versions-to-keep: 1
+          delete-only-pre-release-versions: "true"
