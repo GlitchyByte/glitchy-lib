@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Copyright 2021-2023 GlitchyByte
+# SPDX-License-Identifier: MIT-0
+
+# Builds glib.
+
+# [Setup]
+set -u
+# Capture caller directory and script directory.
+readonly calling_dir="$(pwd)"
+readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
+# Go to script directory and load utilities.
+cd "${script_dir}"
+. ./_gscript
+
+# [Main]
+readonly project="glib"
+
+# Clean, build, and run tests.
+cd "${script_dir}/code"
+./gradlew :${project}:clean :${project}:build :${project}:test :${project}:javadoc
+if test $? -ne 0; then
+  echoerr "Failure!"
+  cd "${calling_dir}"
+  exit 1
+fi
+
+# [Teardown]
+cd "${calling_dir}"
