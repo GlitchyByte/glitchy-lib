@@ -29,12 +29,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class GTaskRunner implements AutoCloseable {
 
-    private static final AtomicLong taskRunnerCount = new AtomicLong(0);
+    private static final AtomicLong taskRunnerCount = new AtomicLong(1);
 
     private final ExecutorService runner;
     private final Lock runnerLock = new ReentrantLock();
     private final long runnerId = taskRunnerCount.getAndIncrement();
-    private final AtomicLong taskCount = new AtomicLong(0);
+    private final AtomicLong taskCount = new AtomicLong(1);
 
     /**
      * Creates a task runner with the given {@link ExecutorService}.
@@ -47,6 +47,27 @@ public final class GTaskRunner implements AutoCloseable {
     public GTaskRunner(final ExecutorService runner) {
         this.runner = runner;
     }
+
+// TODO: Enable when virtual threads are out of preview!
+//
+//    /**
+//     * Creates a task runner.
+//     *
+//     * @param useVirtualThreads True to create a runner that uses virtual threads.
+//     *                          False to create a runner that uses platform threads.
+//     */
+//    public GTaskRunner(final boolean useVirtualThreads) {
+//        this(useVirtualThreads ?
+//                Executors.newVirtualThreadPerTaskExecutor() :
+//                Executors.newCachedThreadPool());
+//    }
+//
+//    /**
+//     * Creates a task runner with a default runner that uses virtual threads.
+//     */
+//    public GTaskRunner() {
+//        this(true);
+//    }
 
     /**
      * Creates a task runner with a default runner.
