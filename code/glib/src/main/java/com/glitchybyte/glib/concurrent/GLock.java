@@ -15,8 +15,10 @@ import java.util.function.Supplier;
  * Lock utilities.
  *
  * <p>This utility class contains common locking constructs.
- * They are not to replace all use cases, just one-lining common quick
- * operations.
+ *
+ * <p>These utilities are not meant to replace all use cases. They encapsulate
+ * common quick operations. They are especially unsuited for operations that
+ * throw exceptions.
  */
 public final class GLock {
 
