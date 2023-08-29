@@ -41,13 +41,13 @@ jobs:
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
 
-      - name: Build
-        working-directory: code
-        run: gradle :${{ env.PROJECT_NAME }}:build
-
       - name: Test
         working-directory: code
         run: gradle :${{ env.PROJECT_NAME }}:test
+
+      - name: Build
+        working-directory: code
+        run: gradle :${{ env.PROJECT_NAME }}:build
 
       - name: Recreate GPG keys
         run: echo "${{ secrets.GPG_KEYS_BASE64 }}" | base64 -d > "${{ github.workspace }}/gpg-keys"

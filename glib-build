@@ -18,7 +18,7 @@ readonly project="glib"
 
 # Clean, build, and run tests.
 cd "${script_dir}/code"
-./gradlew :${project}:clean :${project}:build :${project}:test :${project}:javadoc
+./gradlew :${project}:clean :${project}:test :${project}:build :${project}:javadoc
 if test $? -ne 0; then
   echoerr "Failure!"
   cd "${calling_dir}"
