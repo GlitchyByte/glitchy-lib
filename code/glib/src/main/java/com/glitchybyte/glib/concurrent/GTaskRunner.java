@@ -3,38 +3,23 @@
 
 package com.glitchybyte.glib.concurrent;
 
-import com.glitchybyte.glib.GStrings;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.*;
 
 /**
- * A task runner facility to run {@code GConcurrentTask} tasks.
+ * A task runner facility to run {@link GTask} tasks.
  *
  * <p>Classes ending in 'Task' in the concurrent package must be started with
  * a {@link GTaskRunner}.
  *
  * <p>This runner is also capable of running standalone {@link Runnable}s and
- * {@link Callable}s. This avoids having to create, or keep track of, an
- * {@link ExecutorService}.
+ * {@link Callable}s. This avoids having to create, or keep track of, a
+ * separate {@link ExecutorService}.
  */
-public final class GTaskRunner implements AutoCloseable {
-
-    private static final AtomicLong taskRunnerCount = new AtomicLong(1);
-
-    private final ExecutorService runner;
-    private final Lock runnerLock = new ReentrantLock();
-    private final long runnerId = taskRunnerCount.getAndIncrement();
-    private final AtomicLong taskCount = new AtomicLong(1);
+public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
 
     /**
      * Creates a task runner with the given {@link ExecutorService}.
@@ -45,7 +30,7 @@ public final class GTaskRunner implements AutoCloseable {
      * @param runner {@link ExecutorService} to use as runner.
      */
     public GTaskRunner(final ExecutorService runner) {
-        this.runner = runner;
+        super(runner);
     }
 
 // TODO: Enable when virtual threads are out of preview!
@@ -76,29 +61,16 @@ public final class GTaskRunner implements AutoCloseable {
         this(Executors.newCachedThreadPool());
     }
 
-    private String createTaskThreadName() {
-        return GStrings.format("Task-%s|%s",
-                Long.toHexString(runnerId),
-                Long.toHexString(taskCount.getAndIncrement())
-        );
-    }
-
-    private Runnable createRunWrapper(final Runnable runnable) {
-        return () -> {
-            Thread.currentThread().setName(createTaskThreadName());
-            runnable.run();
-        };
-    }
-
     /**
      * Submits a {@link Runnable} to execute concurrently.
      *
      * @param runnable A {@link Runnable} to execute.
      * @return A {@link Future<Void>} representing pending completion of the task.
+     * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
     @SuppressWarnings("unchecked")
-    public Future<Void> run(final Runnable runnable) {
-        return GLock.lockedResult(runnerLock, () -> (Future<Void>) runner.submit(createRunWrapper(runnable)));
+    public Future<Void> run(final Runnable runnable) throws RejectedExecutionException {
+        return (Future<Void>) runner.submit(createRunnableWrapper(runnable));
     }
 
     /**
@@ -106,8 +78,9 @@ public final class GTaskRunner implements AutoCloseable {
      *
      * @param runnables A collection of {@link Runnable} to execute.
      * @return A list of {@link Future<Void>} representing pending completion of the tasks.
+     * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public List<Future<Void>> runAll(final Collection<Runnable> runnables) {
+    public List<Future<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException {
         return runnables.stream().map(this::run).toList();
     }
 
@@ -116,16 +89,10 @@ public final class GTaskRunner implements AutoCloseable {
      *
      * @param runnables An array of {@link Runnable} to execute.
      * @return A list of {@link Future<Void>} representing pending completion of the tasks.
+     * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public List<Future<Void>> runAll(final Runnable[] runnables) {
+    public List<Future<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException {
         return runAll(Arrays.asList(runnables));
-    }
-
-    private <V> Callable<V> createCallWrapper(final Callable<V> callable) {
-        return () -> {
-            Thread.currentThread().setName(createTaskThreadName());
-            return callable.call();
-        };
     }
 
     /**
@@ -134,9 +101,10 @@ public final class GTaskRunner implements AutoCloseable {
      * @param callable A {@link Callable} to execute.
      * @return A {@link Future} representing pending completion of the task.
      * @param <V> Type of task result.
+     * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <V> Future<V> call(final Callable<V> callable) {
-        return GLock.lockedResult(runnerLock, () -> runner.submit(createCallWrapper(callable)));
+    public <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException {
+        return runner.submit(createCallableWrapper(callable));
     }
 
     /**
@@ -145,8 +113,9 @@ public final class GTaskRunner implements AutoCloseable {
      * @param callables A collection of {@link Callable} to execute.
      * @return A list of {@link Future} representing pending completion of the tasks.
      * @param <V> Type of task result.
+     * @throws RejectedExecutionException If one of the tasks cannot be scheduled for execution.
      */
-    public <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) {
+    public <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException {
         return callables.stream().map(this::call).toList();
     }
 
@@ -156,22 +125,10 @@ public final class GTaskRunner implements AutoCloseable {
      * @param callables An array of {@link Callable} to execute.
      * @return A list of {@link Future} representing pending completion of the tasks.
      * @param <V> Type of task result.
+     * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public <V> List<Future<V>> callAll(final Callable<V>[] callables) {
+    public <V> List<Future<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException {
         return callAll(Arrays.asList(callables));
-    }
-
-    private String getTaskThreadName(final GTask task) {
-        final String taskThreadName = task.getTaskThreadName();
-        return taskThreadName == null ? createTaskThreadName() : taskThreadName;
-    }
-
-    private Runnable createTaskWrapper(final GTask task) {
-        return () -> {
-            Thread.currentThread().setName(getTaskThreadName(task));
-            task.run();
-            task.done();
-        };
     }
 
     /**
@@ -188,10 +145,12 @@ public final class GTaskRunner implements AutoCloseable {
      * @return The started task.
      * @param <T> Task type.
      * @throws InterruptedException If the thread is interrupted while waiting for the task to start.
+     * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <T extends GTask> T start(final T task, final Duration timeout) throws InterruptedException {
+    public <T extends GTask> T start(final T task, final Duration timeout)
+            throws InterruptedException, RejectedExecutionException {
         task.setTaskRunner(this);
-        GLock.locked(runnerLock, () -> runner.execute(createTaskWrapper(task)));
+        runner.execute(createTaskWrapper(task));
         task.awaitStarted(timeout);
         return task;
     }
@@ -209,14 +168,9 @@ public final class GTaskRunner implements AutoCloseable {
      * @return The started task.
      * @param <T> Task type.
      * @throws InterruptedException If the thread is interrupted while waiting for the task to start.
+     * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <T extends GTask> T start(final T task) throws InterruptedException {
+    public <T extends GTask> T start(final T task) throws InterruptedException, RejectedExecutionException {
         return start(task, Duration.ofSeconds(5));
-    }
-
-    @Override
-    public void close() {
-        runner.shutdownNow();
-        runner.close();
     }
 }
