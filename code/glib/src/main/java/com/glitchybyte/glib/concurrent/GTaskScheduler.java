@@ -39,11 +39,11 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
     /**
      * Schedules a one-shot task.
      *
-     * @param runnable Task to schedule.
      * @param delay Delay before task execution.
+     * @param runnable Task to schedule.
      * @return A {@link GCancelable} to cancel the task.
      */
-    public GCancelable schedule(final Runnable runnable, final Duration delay) {
+    public GCancelable schedule(final Duration delay, final Runnable runnable) {
         final var future = runner.schedule(
                 createRunnableWrapper(runnable),
                 delay.toMillis(),
@@ -55,13 +55,13 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
     /**
      * Schedules a task to run at a fixed delay.
      *
-     * @param runnable Task to schedule.
      * @param initialDelay Delay before task execution.
      * @param period Cadence at which tasks run.
+     * @param runnable Task to schedule.
      * @return A {@link GCancelable} to cancel the task.
      */
-    public GCancelable scheduleAtFixedRate(final Runnable runnable,
-            final Duration initialDelay, final Duration period) {
+    public GCancelable scheduleAtFixedRate(final Duration initialDelay,
+            final Duration period, final Runnable runnable) {
         final var future = runner.scheduleAtFixedRate(
                 createRunnableWrapper(runnable),
                 initialDelay.toMillis(),
@@ -74,13 +74,13 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
     /**
      * Schedules a task at a delay after each run.
      *
-     * @param runnable Task to schedule.
      * @param initialDelay Delay before task execution.
      * @param delay Delay after task execution.
+     * @param runnable Task to schedule.
      * @return A {@link GCancelable} to cancel the task.
      */
-    public GCancelable scheduleWithFixedDelay(final Runnable runnable,
-            final Duration initialDelay, final Duration delay) {
+    public GCancelable scheduleWithFixedDelay(final Duration initialDelay,
+            final Duration delay, final Runnable runnable) {
         final var future = runner.scheduleWithFixedDelay(
                 createRunnableWrapper(runnable),
                 initialDelay.toMillis(),
