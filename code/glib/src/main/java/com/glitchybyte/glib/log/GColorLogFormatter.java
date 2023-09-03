@@ -23,7 +23,7 @@ public class GColorLogFormatter extends GLogFormatter {
     private static final String COLOR_LEVEL_FINEST = GConsole.foregroundColor(GConsole.rgb(1, 1, 5));
     private static final String COLOR_THREAD_NAME = GConsole.foregroundColor(GConsole.rgb(1, 1, 1));
     private static final String COLOR_CLASS_NAME = GConsole.foregroundColor(GConsole.rgb(5, 5, 5));
-    private static final String COLOR_THROWABLE_MESSAGE = GConsole.foregroundColor(GConsole.rgb(5, 3, 1));
+    private static final String COLOR_THROWABLE_MESSAGE = GConsole.foregroundColor(GConsole.rgb(5, 4, 4));
     private static final String COLOR_THROWABLE_TRACE_LINE = GConsole.foregroundColor(GConsole.rgb(5, 1, 1));
 
     /**
