@@ -44,7 +44,12 @@ public class GStandardLogFormatter extends GLogFormatter {
     }
 
     @Override
-    protected void applyThrowableLine(final StringBuilder sb, final String value) {
+    protected void applyThrowableMessage(final StringBuilder sb, final String value) {
+        sb.append(value);
+    }
+
+    @Override
+    protected void applyThrowableTraceLine(final StringBuilder sb, final String value) {
         sb.append(value);
     }
 }

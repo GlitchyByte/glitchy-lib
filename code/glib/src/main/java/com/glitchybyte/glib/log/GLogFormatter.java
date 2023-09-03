@@ -78,12 +78,17 @@ public abstract class GLogFormatter extends SimpleFormatter {
         sb.append(' ');
         applyMessage(sb, message);
         sb.append(GStrings.NEW_LINE);
-        if (throwable != null) {
-            for (final var element: throwable.getStackTrace()) {
+        Throwable error = throwable;
+        while (error != null) {
+            sb.append(GStrings.SPACE_TAB);
+            applyThrowableMessage(sb, error.getMessage());
+            sb.append(GStrings.NEW_LINE);
+            for (final var trace: throwable.getStackTrace()) {
                 sb.append(GStrings.SPACE_TAB);
-                applyThrowableLine(sb, element.toString());
+                applyThrowableTraceLine(sb, trace.toString());
                 sb.append(GStrings.NEW_LINE);
             }
+            error = error.getCause();
         }
         return sb.toString();
     }
@@ -134,11 +139,20 @@ public abstract class GLogFormatter extends SimpleFormatter {
     protected abstract void applyMessage(final StringBuilder sb, final String value);
 
     /**
-     * Applies the {@code throwable} value to the log being built
+     * Applies the {@code throwableMessage} value to the log being built
      * by the given {@code StringBuilder}.
      *
      * @param sb Log message builder.
      * @param value Value to apply.
      */
-    protected abstract void applyThrowableLine(final StringBuilder sb, final String value);
+    protected abstract void applyThrowableMessage(final StringBuilder sb, final String value);
+
+    /**
+     * Applies the {@code throwableTraceLine} value to the log being built
+     * by the given {@code StringBuilder}.
+     *
+     * @param sb Log message builder.
+     * @param value Value to apply.
+     */
+    protected abstract void applyThrowableTraceLine(final StringBuilder sb, final String value);
 }

@@ -143,7 +143,7 @@ public final class GLog {
         final StackTraceElement stackTraceElement = currentThread.getStackTrace()[3];
         final String className = stackTraceElement.getClassName();
         final String methodName = stackTraceElement.getMethodName();
-        logger.logp(level, className, methodName, throwable.getMessage(), throwable);
+        logger.logp(level, className, methodName, throwable.toString(), throwable);
     }
 
     /**

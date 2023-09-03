@@ -23,7 +23,8 @@ public class GColorLogFormatter extends GLogFormatter {
     private static final String COLOR_LEVEL_FINEST = GConsole.foregroundColor(GConsole.rgb(1, 1, 5));
     private static final String COLOR_THREAD_NAME = GConsole.foregroundColor(GConsole.rgb(1, 1, 1));
     private static final String COLOR_CLASS_NAME = GConsole.foregroundColor(GConsole.rgb(5, 5, 5));
-    private static final String COLOR_THROWABLE_LINE = GConsole.foregroundColor(GConsole.rgb(5, 1, 1));
+    private static final String COLOR_THROWABLE_MESSAGE = GConsole.foregroundColor(GConsole.rgb(5, 3, 1));
+    private static final String COLOR_THROWABLE_TRACE_LINE = GConsole.foregroundColor(GConsole.rgb(5, 1, 1));
 
     /**
      * Creates a color log formatter.
@@ -75,8 +76,15 @@ public class GColorLogFormatter extends GLogFormatter {
     }
 
     @Override
-    protected void applyThrowableLine(final StringBuilder sb, final String value) {
-        sb.append(COLOR_THROWABLE_LINE);
+    protected void applyThrowableMessage(final StringBuilder sb, final String value) {
+        sb.append(COLOR_THROWABLE_MESSAGE);
+        sb.append(value);
+        sb.append(GConsole.resetColor());
+    }
+
+    @Override
+    protected void applyThrowableTraceLine(final StringBuilder sb, final String value) {
+        sb.append(COLOR_THROWABLE_TRACE_LINE);
         sb.append(value);
         sb.append(GConsole.resetColor());
     }
