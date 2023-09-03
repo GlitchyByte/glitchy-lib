@@ -1,4 +1,4 @@
-// Copyright 2014-2022 GlitchyByte
+// Copyright 2014-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -45,7 +45,7 @@ public final class GStrings {
     }
 
     /**
-     * Convenience replacement for {@code String.format}, but it already includes US locale.
+     * Convenience replacement for {@code String.format} that already includes US locale.
      *
      * @param format A format string.
      * @param args Arguments for format.
@@ -53,6 +53,26 @@ public final class GStrings {
      */
     public static String format(final String format, final Object... args) {
         return String.format(Locale.US, format, args);
+    }
+
+    /**
+     * Convenience replacement for {@code String.toLowerCase} that already includes US locale.
+     *
+     * @param str String to convert.
+     * @return Converted string.
+     */
+    public static String toLowerCase(final String str) {
+        return str == null ? null : str.toLowerCase(Locale.US);
+    }
+
+    /**
+     * Convenience replacement for {@code String.toUpperCase} that already includes US locale.
+     *
+     * @param str String to convert.
+     * @return Converted string.
+     */
+    public static String toUpperCase(final String str) {
+        return str == null ? null : str.toUpperCase(Locale.US);
     }
 
     /**
