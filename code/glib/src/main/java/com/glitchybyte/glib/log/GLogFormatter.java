@@ -7,7 +7,10 @@ import com.glitchybyte.glib.GStrings;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
@@ -78,19 +81,45 @@ public abstract class GLogFormatter extends SimpleFormatter {
         sb.append(' ');
         applyMessage(sb, message);
         sb.append(GStrings.NEW_LINE);
-        Throwable error = throwable;
-        while (error != null) {
-            sb.append(GStrings.SPACE_TAB);
-            applyThrowableMessage(sb, error.getMessage());
-            sb.append(GStrings.NEW_LINE);
-            for (final var trace: throwable.getStackTrace()) {
-                sb.append(GStrings.SPACE_TAB);
-                applyThrowableTraceLine(sb, trace.toString());
-                sb.append(GStrings.NEW_LINE);
-            }
-            error = error.getCause();
+        if (throwable != null) {
+            appendThrowable(sb, throwable);
         }
         return sb.toString();
+    }
+
+    private void appendThrowable(final StringBuilder sb, final Throwable throwable) {
+        sb.append(GStrings.SPACE_TAB);
+        applyThrowableMessage(sb, throwable.toString());
+        sb.append(GStrings.NEW_LINE);
+        Set<String> traces = appendStackTrace(sb, throwable.getStackTrace(), Collections.emptySet());
+        Throwable cause = throwable.getCause();
+        while (cause != null) {
+            sb.append(GStrings.SPACE_TAB);
+            applyThrowableMessage(sb, "Cause: ");
+            applyThrowableMessage(sb, cause.toString());
+            sb.append(GStrings.NEW_LINE);
+            traces = appendStackTrace(sb, cause.getStackTrace(), traces);
+            cause = cause.getCause();
+        }
+    }
+
+    private Set<String> appendStackTrace(final StringBuilder sb, final StackTraceElement[] stackTrace,
+            final Set<String> lastTraces) {
+        final Set<String> traces = new HashSet<>();
+        for (final var trace: stackTrace) {
+            final String traceLine = trace.toString();
+            sb.append(GStrings.SPACE_TAB);
+            applyThrowableTraceLine(sb, traceLine);
+            sb.append(GStrings.NEW_LINE);
+            traces.add(traceLine);
+            if (lastTraces.contains(traceLine)) {
+                sb.append(GStrings.SPACE_TAB);
+                applyThrowableTraceLine(sb, "... (" + (stackTrace.length - traces.size()) + " more)");
+                sb.append(GStrings.NEW_LINE);
+                break;
+            }
+        }
+        return traces;
     }
 
     /**
