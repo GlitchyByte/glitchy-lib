@@ -113,9 +113,12 @@ public abstract class GLogFormatter extends SimpleFormatter {
             sb.append(GStrings.NEW_LINE);
             traces.add(traceLine);
             if (lastTraces.contains(traceLine)) {
-                sb.append(GStrings.SPACE_TAB);
-                applyThrowableTraceLine(sb, "... (" + (stackTrace.length - traces.size()) + " more)");
-                sb.append(GStrings.NEW_LINE);
+                final int moreCount = stackTrace.length - traces.size();
+                if (moreCount > 0) {
+                    sb.append(GStrings.SPACE_TAB);
+                    applyThrowableTraceLine(sb, "... (" + moreCount + " more)");
+                    sb.append(GStrings.NEW_LINE);
+                }
                 break;
             }
         }
