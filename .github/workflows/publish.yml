@@ -80,10 +80,9 @@ jobs:
             "${{ env.PROJECT_NAME }}/build/docs/javadoc/stylesheet.css"
 
       - name: Prepare Pages
-        working-directory: code
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ${{ env.PROJECT_NAME }}/build/docs/javadoc
+          path: code/${{ env.PROJECT_NAME }}/build/docs/javadoc
 
       - name: Deploy Pages
         uses: actions/deploy-pages@v2
