@@ -8,7 +8,7 @@ This is a way of keeping my dependencies updated in one place and working togeth
 
 ---
 ## GLib Java library
-![Version](https://img.shields.io/badge/Version-1.7.3-blue)
+![Version](https://img.shields.io/badge/Version-1.7.4-blue)
 
 Classes and utilities for general development.
 [Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.7.3")
+    implementation("com.glitchybyte.glib:glib:1.7.4")
 }
 ```
 
