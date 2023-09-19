@@ -41,6 +41,13 @@ public abstract class GAutoCloseable implements AutoCloseable {
     private final ReadWriteLock closedLock = new ReentrantReadWriteLock();
 
     /**
+     * Constructs a GAutoCloseable.
+     */
+    public GAutoCloseable() {
+        // No-op.
+    }
+
+    /**
      * Returns true if this resource is closed.
      *
      * @return True if this resource is closed.
