@@ -5,6 +5,12 @@ plugins {
     `kotlin-dsl`
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(20))
+    }
+}
+
 repositories {
     gradlePluginPortal()
 }
