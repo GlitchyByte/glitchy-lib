@@ -35,6 +35,8 @@ public final class GStrings {
      * Indents the string. It will correctly indent multiple lines
      * as long as they have system line separators.
      *
+     * <p>Unlike {@code String.indent}, this function does not add a new line if it doesn't exist.
+     *
      * @param str String to indent.
      * @return Indented string.
      */
