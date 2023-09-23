@@ -32,6 +32,16 @@ public final class GStrings {
     private static final Format numberFormat = DecimalFormat.getNumberInstance(Locale.US);
 
     /**
+     * Convenience for common test of a null or empty string.
+     *
+     * @param str String to test.
+     * @return True, if the string is null or empty.
+     */
+    public static boolean isNullOrEmpty(final String str) {
+        return (str == null) || str.isEmpty();
+    }
+
+    /**
      * Indents the string. It will correctly indent multiple lines
      * as long as they have system line separators.
      *
