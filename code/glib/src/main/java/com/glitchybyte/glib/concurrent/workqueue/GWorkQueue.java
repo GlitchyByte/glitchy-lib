@@ -84,8 +84,8 @@ public interface GWorkQueue<T> {
          */
         public GWorkQueueTask<T> build() {
             return parallelProcessing ?
-                    new GSequentialWorkQueueTask<>(threadName, processor) :
-                    new GParallelWorkQueueTask<>(threadName, processor);
+                    new GParallelWorkQueueTask<>(threadName, processor) :
+                    new GSequentialWorkQueueTask<>(threadName, processor);
         }
     }
 
