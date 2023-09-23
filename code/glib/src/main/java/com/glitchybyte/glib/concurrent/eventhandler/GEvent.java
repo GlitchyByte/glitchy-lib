@@ -11,9 +11,9 @@ import com.glitchybyte.glib.GObjects;
 public final class GEvent {
 
     /**
-     * Event key.
+     * Event kind.
      */
-    public final String key;
+    public final String kind;
 
     /**
      * Event data.
@@ -23,11 +23,11 @@ public final class GEvent {
     /**
      * Creates an event object to be sent to an event handler.
      *
-     * @param key Event key.
+     * @param kind Event kind.
      * @param data Event data.
      */
-    public GEvent(final String key, final Object data) {
-        this.key = key;
+    public GEvent(final String kind, final Object data) {
+        this.kind = kind;
         this.data = data;
     }
 

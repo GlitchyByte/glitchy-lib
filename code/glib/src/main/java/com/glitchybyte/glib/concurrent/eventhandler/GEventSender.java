@@ -18,15 +18,15 @@ public interface GEventSender {
     /**
      * Send event.
      *
-     * @param key Event key.
+     * @param kind Event kind.
      * @param data Event data.
      */
-    void send(final String key, final Object data);
+    void send(final String kind, final Object data);
 
     /**
      * Send event with no data.
      *
-     * @param key Event key.
+     * @param kind Event kind.
      */
-    void send(final String key);
+    void send(final String kind);
 }
