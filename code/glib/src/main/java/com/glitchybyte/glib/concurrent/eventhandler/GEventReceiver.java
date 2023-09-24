@@ -8,7 +8,6 @@ import com.glitchybyte.glib.concurrent.GTaskRunner;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,7 +23,7 @@ import java.util.function.Consumer;
  */
 public final class GEventReceiver implements AutoCloseable {
 
-    private final GTaskRunner runner = new GTaskRunner(Executors.newSingleThreadExecutor());
+    private final GTaskRunner runner = new GTaskRunner(1);
     private final Consumer<GEvent> eventHandler;
     private final Queue<GEvent> events = new ConcurrentLinkedQueue<>();
     private boolean moreEvents = false;

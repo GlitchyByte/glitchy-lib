@@ -4,7 +4,6 @@
 package com.glitchybyte.glib.concurrent;
 
 import java.time.Duration;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,6 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * A single concurrent task that starts in a separate thread and runs until
  * finished or the task is interrupted.
+ *
+ * <p>{@link GTask}s are long-lived or busy. Though there is no error if they
+ * are very short-lived, a virtual thread is a better option for that. All threads
+ * started by {@link GTaskRunner} are always platform threads.
  *
  * <p>Implementations MUST call {@code started} within their {@code run}
  * implementation when the task is ready to receive inputs (e.g., after
@@ -23,10 +26,10 @@ public abstract class GTask implements Runnable {
     private GTaskRunner taskRunner = null;
     private Thread taskThread = null;
     private final String taskThreadName;
-    private final AtomicBoolean hasStarted = new AtomicBoolean(false);
+    private boolean hasStarted = false;
     private final Lock hasStartedLock = new ReentrantLock();
     private final Condition hasStartedSignal = hasStartedLock.newCondition();
-    private final AtomicBoolean isDone = new AtomicBoolean(false);
+    private boolean isDone = false;
     private final Lock isDoneLock = new ReentrantLock();
     private final Condition isDoneSignal = isDoneLock.newCondition();
 
@@ -83,21 +86,33 @@ public abstract class GTask implements Runnable {
      * <p>This method MUST be called to indicate the task is running and ready.
      * Even if the task decides it will exit fast it must call this method.
      *
-     * <p>Repeated calls to this method are permitted and will return fast
-     * without performing any further synchronization.
+     * <p>Repeated calls to this method are permitted and will return fast.
      */
     protected void started() {
-        if (hasStarted.get()) {
-            return;
+        hasStartedLock.lock();
+        try {
+            if (hasStarted) {
+                return;
+            }
+            taskThread = Thread.currentThread();
+            hasStarted = true;
+            hasStartedSignal.signalAll();
+        } finally {
+            hasStartedLock.unlock();
         }
-        taskThread = Thread.currentThread();
-        hasStarted.set(true);
-        GLock.signalAll(hasStartedLock, hasStartedSignal);
     }
 
+    /**
+     * Marks this task done and signals it.
+     */
     void done() {
-        isDone.compareAndSet(false, true);
-        GLock.signalAll(isDoneLock, isDoneSignal);
+        isDoneLock.lock();
+        try {
+            isDone = true;
+            isDoneSignal.signalAll();
+        } finally {
+            isDoneLock.unlock();
+        }
     }
 
     /**
@@ -106,7 +121,7 @@ public abstract class GTask implements Runnable {
      * @return Whether this task has completed.
      */
     public boolean isDone() {
-        return isDone.get();
+        return GLock.lockedResult(isDoneLock, () -> isDone);
     }
 
     /**
@@ -115,7 +130,7 @@ public abstract class GTask implements Runnable {
      * @throws InterruptedException If the wait was interrupted.
      */
     public void awaitDone() throws InterruptedException {
-        GLock.awaitConditionWithTest(isDoneLock, isDoneSignal, this::isDone);
+        GLock.awaitConditionWithTest(isDoneLock, isDoneSignal, () -> isDone);
     }
 
     /**
@@ -136,7 +151,7 @@ public abstract class GTask implements Runnable {
      * @throws InterruptedException If the wait is interrupted.
      */
     void awaitStarted(final Duration timeout) throws InterruptedException {
-        if (!GLock.awaitConditionWithTestAndTimeout(hasStartedLock, hasStartedSignal, hasStarted::get, timeout)) {
+        if (!GLock.awaitConditionWithTestAndTimeout(hasStartedLock, hasStartedSignal, () -> hasStarted, timeout)) {
             throw new IllegalStateException("Task did not start within the timeout. Did you forget to call 'started'?");
         }
     }

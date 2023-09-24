@@ -3,11 +3,8 @@
 
 package com.glitchybyte.glib.concurrent;
 
-import com.glitchybyte.glib.GStrings;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Abstract class for task runner facilities.
@@ -23,15 +20,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable {
 
-    private static final AtomicLong taskRunnerCount = new AtomicLong(0);
-
     /**
      * Actual {@link ExecutorService} runner.
      */
     protected final ES runner;
-
-    private final long runnerId = taskRunnerCount.getAndIncrement();
-    private final AtomicLong taskCount = new AtomicLong(0);
 
     /**
      * Creates a task runner with the given {@link ExecutorService}.
@@ -51,54 +43,19 @@ public abstract class GTaskExecutor<ES extends ExecutorService> implements AutoC
         runner.close();
     }
 
-    private String createTaskThreadName() {
-        return GStrings.format("Task-%s|%s",
-                Long.toHexString(runnerId),
-                Long.toHexString(taskCount.getAndIncrement())
-        );
-    }
-
     /**
-     * Creates a wrapper around the given {@link Runnable} that sets the thread name.
-     *
-     * @param runnable {@link Runnable} to wrap.
-     * @return A wrapped {@link Runnable}.
-     */
-    protected Runnable createRunnableWrapper(final Runnable runnable) {
-        return () -> {
-            Thread.currentThread().setName(createTaskThreadName());
-            runnable.run();
-        };
-    }
-
-    /**
-     * Creates a wrapper around the given {@link Callable} that sets the thread name.
-     *
-     * @param callable {@link Callable} to wrap.
-     * @return A wrapped {@link Callable}.
-     * @param <V> {@link Callable} return value type.
-     */
-    protected  <V> Callable<V> createCallableWrapper(final Callable<V> callable) {
-        return () -> {
-            Thread.currentThread().setName(createTaskThreadName());
-            return callable.call();
-        };
-    }
-
-    private String getTaskThreadName(final GTask task) {
-        final String taskThreadName = task.getTaskThreadName();
-        return taskThreadName == null ? createTaskThreadName() : taskThreadName;
-    }
-
-    /**
-     * Creates a wrapper around the given {@link GTask} that sets the thread name.
+     * Creates a wrapper around the given {@link GTask} that sets the thread
+     * name, if given, and marks task as done when it's done.
      *
      * @param task {@link GTask} to wrap.
      * @return A wrapped {@link GTask} in a {@link Runnable}.
      */
     protected Runnable createTaskWrapper(final GTask task) {
         return () -> {
-            Thread.currentThread().setName(getTaskThreadName(task));
+            final String threadName = task.getTaskThreadName();
+            if (threadName != null) {
+                Thread.currentThread().setName(threadName);
+            }
             task.run();
             task.done();
         };

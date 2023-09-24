@@ -16,49 +16,29 @@ import java.util.concurrent.*;
  * a {@link GTaskRunner}.
  *
  * <p>This runner is also capable of running standalone {@link Runnable}s and
- * {@link Callable}s. This avoids having to create, or keep track of, a
- * separate {@link ExecutorService}.
+ * {@link Callable}s. This avoids having to create, or keep track of, a separate
+ * {@link ExecutorService}. Keep in mind this class uses platform threads.
  */
 public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
 
     /**
-     * Creates a task runner with the given {@link ExecutorService}.
-     *
-     * <p>This runner owns the given {@link ExecutorService} and will shut it
-     * down and close it when the runner is closed.
-     *
-     * @param runner {@link ExecutorService} to use as runner.
-     */
-    public GTaskRunner(final ExecutorService runner) {
-        super(runner);
-    }
-
-// TODO: Enable when virtual threads are out of preview!
-//
-//    /**
-//     * Creates a task runner.
-//     *
-//     * @param useVirtualThreads True to create a runner that uses virtual threads.
-//     *                          False to create a runner that uses platform threads.
-//     */
-//    public GTaskRunner(final boolean useVirtualThreads) {
-//        this(useVirtualThreads ?
-//                Executors.newVirtualThreadPerTaskExecutor() :
-//                Executors.newCachedThreadPool());
-//    }
-//
-//    /**
-//     * Creates a task runner with a default runner that uses virtual threads.
-//     */
-//    public GTaskRunner() {
-//        this(true);
-//    }
-
-    /**
-     * Creates a task runner with a default runner.
+     * Creates a task runner with an unbounded cached thread pool.
      */
     public GTaskRunner() {
-        this(Executors.newCachedThreadPool());
+        super(Executors.newCachedThreadPool(new GThreadFactory()));
+    }
+
+    /**
+     * Creates a task runner with a fixed thread pool.
+     *
+     * @param threadCount Thread count for this runner.
+     */
+    public GTaskRunner(final Integer threadCount) {
+        super(switch (threadCount) {
+            case 1 -> Executors.newSingleThreadScheduledExecutor(new GThreadFactory());
+            case Integer x when x > 1 -> Executors.newFixedThreadPool(threadCount, new GThreadFactory());
+            case null, default -> throw new IllegalArgumentException("threadCount must be positive!");
+        });
     }
 
     /**
@@ -70,7 +50,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      */
     @SuppressWarnings("unchecked")
     public Future<Void> run(final Runnable runnable) throws RejectedExecutionException {
-        return (Future<Void>) runner.submit(createRunnableWrapper(runnable));
+        return (Future<Void>) runner.submit(runnable);
     }
 
     /**
@@ -104,7 +84,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
     public <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException {
-        return runner.submit(createCallableWrapper(callable));
+        return runner.submit(callable);
     }
 
     /**

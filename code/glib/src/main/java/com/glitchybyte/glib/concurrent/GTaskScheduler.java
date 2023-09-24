@@ -45,7 +45,7 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
      */
     public GCancelable schedule(final Duration delay, final Runnable runnable) {
         final var future = runner.schedule(
-                createRunnableWrapper(runnable),
+                runnable,
                 delay.toMillis(),
                 TimeUnit.MILLISECONDS
         );
@@ -63,7 +63,7 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
     public GCancelable scheduleAtFixedRate(final Duration initialDelay,
             final Duration period, final Runnable runnable) {
         final var future = runner.scheduleAtFixedRate(
-                createRunnableWrapper(runnable),
+                runnable,
                 initialDelay.toMillis(),
                 period.toMillis(),
                 TimeUnit.MILLISECONDS
@@ -82,7 +82,7 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
     public GCancelable scheduleWithFixedDelay(final Duration initialDelay,
             final Duration delay, final Runnable runnable) {
         final var future = runner.scheduleWithFixedDelay(
-                createRunnableWrapper(runnable),
+                runnable,
                 initialDelay.toMillis(),
                 delay.toMillis(),
                 TimeUnit.MILLISECONDS
