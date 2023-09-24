@@ -37,7 +37,7 @@ tasks.compileJava {
 
 testing {
     suites.withType(JvmTestSuite::class) {
-        useJUnitJupiter("5.9.3")
+        useJUnitJupiter("5.10.0")
     }
 }
 
