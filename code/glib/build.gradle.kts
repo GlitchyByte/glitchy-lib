@@ -48,4 +48,4 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.8.0-SNAPSHOT"
+version = "1.8.0"

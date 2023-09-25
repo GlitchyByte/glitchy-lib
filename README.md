@@ -1,6 +1,6 @@
 # Glitchy Kit
 
-![Java](https://img.shields.io/badge/Java-20-orange)
+![Java](https://img.shields.io/badge/Java-21-orange)
 
 Included in this repository are libraries and utilities common to many of my projects.
 
@@ -8,7 +8,7 @@ This is a way of keeping my dependencies updated in one place and working togeth
 
 ---
 ## GLib Java library
-![Version](https://img.shields.io/badge/Version-1.7.4-blue)
+![Version](https://img.shields.io/badge/Version-1.8.0-blue)
 
 Classes and utilities for general development.
 [Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.7.4")
+    implementation("com.glitchybyte.glib:glib:1.8.0")
 }
 ```
 
