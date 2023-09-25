@@ -6,7 +6,7 @@ package com.glitchybyte.glib.concurrent.event;
 import com.glitchybyte.glib.GObjects;
 
 /**
- * Event sent by event handler.
+ * Event.
  */
 public final class GEvent {
 
@@ -21,7 +21,7 @@ public final class GEvent {
     public final Object data;
 
     /**
-     * Creates an event object to be sent to an event handler.
+     * Creates an event.
      *
      * @param kind Event kind.
      * @param data Event data.
