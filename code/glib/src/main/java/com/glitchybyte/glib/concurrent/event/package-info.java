@@ -4,4 +4,4 @@
 /**
  * An event sender and receiver system.
  */
-package com.glitchybyte.glib.concurrent.eventhandler;
+package com.glitchybyte.glib.concurrent.event;
