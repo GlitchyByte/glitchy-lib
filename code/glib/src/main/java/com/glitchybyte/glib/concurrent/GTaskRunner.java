@@ -35,7 +35,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      */
     public GTaskRunner(final Integer threadCount) {
         super(switch (threadCount) {
-            case 1 -> Executors.newSingleThreadScheduledExecutor(new GThreadFactory());
+            case 1 -> Executors.newSingleThreadExecutor(new GThreadFactory());
             case Integer x when x > 1 -> Executors.newFixedThreadPool(threadCount, new GThreadFactory());
             case null, default -> throw new IllegalArgumentException("threadCount must be positive!");
         });

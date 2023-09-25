@@ -18,6 +18,26 @@ import java.util.concurrent.TimeUnit;
 public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService> {
 
     /**
+     * Creates a task scheduler with a single worker thread.
+     */
+    public GTaskScheduler() {
+        this(Executors.newSingleThreadScheduledExecutor(new GThreadFactory()));
+    }
+
+    /**
+     * Creates a task scheduler with a fixed thread pool.
+     *
+     * @param threadCount Thread count for this scheduler.
+     */
+    public GTaskScheduler(final Integer threadCount) {
+        super(switch (threadCount) {
+            case 1 -> Executors.newSingleThreadScheduledExecutor(new GThreadFactory());
+            case Integer x when x > 1 -> Executors.newScheduledThreadPool(threadCount, new GThreadFactory());
+            case null, default -> throw new IllegalArgumentException("threadCount must be positive!");
+        });
+    }
+
+    /**
      * Creates a task scheduler with the given {@link ScheduledExecutorService}.
      *
      * <p>This scheduler owns the given {@link ScheduledExecutorService} and
@@ -27,13 +47,6 @@ public final class GTaskScheduler extends GTaskExecutor<ScheduledExecutorService
      */
     public GTaskScheduler(final ScheduledExecutorService runner) {
         super(runner);
-    }
-
-    /**
-     * Creates a task scheduler with a default runner.
-     */
-    public GTaskScheduler() {
-        this(Executors.newSingleThreadScheduledExecutor());
     }
 
     /**

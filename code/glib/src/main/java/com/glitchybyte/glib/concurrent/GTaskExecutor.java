@@ -3,22 +3,15 @@
 
 package com.glitchybyte.glib.concurrent;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 /**
  * Abstract class for task runner facilities.
  *
- * <p>Contains wrapper methods for {@link Runnable}s and {@link Callable}s
- * to standardize thread names.
- *
- * <p>IMPORTANT NOTE: Most of this class could be replaced with a ThreadFactory,
- * but with virtual threads coming up that code seems to be in flux, so we are
- * going to create a wrap around an already constructed thread object.
- *
  * @param <ES> An {@link ExecutorService} or descendant.
  */
-public abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable {
+public sealed abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable
+        permits GTaskRunner, GTaskScheduler {
 
     /**
      * Actual {@link ExecutorService} runner.
