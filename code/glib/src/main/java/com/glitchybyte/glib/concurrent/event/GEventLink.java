@@ -59,16 +59,6 @@ public final class GEventLink implements GEventSender {
     }
 
     /**
-     * Registers a receiver to a group of kinds.
-     *
-     * @param receiver Event receiver.
-     * @param kinds Kinds of events for which to register receiver.
-     */
-    void registerEventReceiver(final GEventReceiver receiver, final Set<String> kinds) {
-        kinds.forEach(kind -> registerEventReceiver(receiver, kind));
-    }
-
-    /**
      * De-registers a receiver from the given kind.
      *
      * @param receiver Event receiver.
@@ -88,16 +78,6 @@ public final class GEventLink implements GEventSender {
         } finally {
             kindRegistryLock.writeLock().unlock();
         }
-    }
-
-    /**
-     * De-registers a receiver from a group of kinds.
-     *
-     * @param receiver Event receiver.
-     * @param kinds Kinds of events for which to de-register receiver.
-     */
-    void deregisterEventReceiver(final GEventReceiver receiver, final Set<String> kinds) {
-        kinds.forEach(kind -> deregisterEventReceiver(receiver, kind));
     }
 
     /**

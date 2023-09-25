@@ -27,6 +27,7 @@ public final class GEventReceiver implements AutoCloseable {
     private final GTaskRunner runner = new GTaskRunner(1);
     private final GEventLink link;
     private final Consumer<GEvent> eventHandler;
+    private boolean isClosed = false;
     private final Queue<GEvent> events = new ConcurrentLinkedQueue<>();
     private boolean moreEvents = false;
     private final Lock eventsLock = new ReentrantLock();
@@ -46,7 +47,41 @@ public final class GEventReceiver implements AutoCloseable {
     @Override
     public void close() {
         link.deregisterEventReceiver(this);
+        GLock.locked(eventsLock, () -> {
+            isClosed = true;
+            eventReceived.signalAll();
+        });
         runner.close();
+    }
+
+    private void processEvents() {
+        // This is happening on its own thread.
+        while (true) {
+            final GEvent event = events.poll();
+            if (event == null) {
+                // If we can't find any other events, we await the signal for more events
+                // which can be happening right now! before we even lock. So we check for
+                // that within the lock.
+                eventsLock.lock();
+                try {
+                    if (isClosed) {
+                        break;
+                    } else if (!moreEvents) {
+                        eventReceived.await();
+                        moreEvents = false;
+                    }
+                } catch (final InterruptedException e) {
+                    // We out!
+                    break;
+                } finally {
+                    eventsLock.unlock();
+                }
+            } else {
+                // The handler can take all the time it wants.
+                // It will simply delay processing of their own events.
+                eventHandler.accept(event);
+            }
+        }
     }
 
     /**
@@ -67,7 +102,7 @@ public final class GEventReceiver implements AutoCloseable {
      * @return This receiver.
      */
     public GEventReceiver subscribeTo(final Set<String> kinds) {
-        link.registerEventReceiver(this, kinds);
+        kinds.forEach(this::subscribeTo);
         return this;
     }
 
@@ -89,7 +124,7 @@ public final class GEventReceiver implements AutoCloseable {
      * @return This receiver.
      */
     public GEventReceiver unsubscribeFrom(final Set<String> kinds) {
-        link.deregisterEventReceiver(this, kinds);
+        kinds.forEach(this::unsubscribeFrom);
         return this;
     }
 
@@ -119,34 +154,6 @@ public final class GEventReceiver implements AutoCloseable {
                 moreEvents = true;
                 eventReceived.signalAll();
             });
-        }
-    }
-
-    private void processEvents() {
-        // This is happening on its own thread.
-        while (true) {
-            final GEvent event = events.poll();
-            if (event == null) {
-                // If we can't find any other events, we await the signal for more events
-                // which can be happening right now! before we even lock. So we check for
-                // that within the lock.
-                eventsLock.lock();
-                try {
-                    if (!moreEvents) {
-                        eventReceived.await();
-                        moreEvents = false;
-                    }
-                } catch (final InterruptedException e) {
-                    // We out!
-                    break;
-                } finally {
-                    eventsLock.unlock();
-                }
-            } else {
-                // The handler can take all the time it wants.
-                // It will simply delay processing of their own events.
-                eventHandler.accept(event);
-            }
         }
     }
 }
