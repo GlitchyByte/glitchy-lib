@@ -7,6 +7,7 @@ import com.glitchybyte.glib.concurrent.GLock;
 import com.glitchybyte.glib.concurrent.GTaskRunner;
 
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -24,6 +25,7 @@ import java.util.function.Consumer;
 public final class GEventReceiver implements AutoCloseable {
 
     private final GTaskRunner runner = new GTaskRunner(1);
+    private final GEventLink link;
     private final Consumer<GEvent> eventHandler;
     private final Queue<GEvent> events = new ConcurrentLinkedQueue<>();
     private boolean moreEvents = false;
@@ -35,14 +37,70 @@ public final class GEventReceiver implements AutoCloseable {
      *
      * @param eventHandler Event handler.
      */
-    GEventReceiver(final Consumer<GEvent> eventHandler) {
+    GEventReceiver(final GEventLink link, final Consumer<GEvent> eventHandler) {
+        this.link = link;
         this.eventHandler = eventHandler;
         runner.run(this::processEvents);
     }
 
     @Override
     public void close() {
+        link.deregisterEventReceiver(this);
         runner.close();
+    }
+
+    /**
+     * Subscribes this receiver to the given kind of event.
+     *
+     * @param kind Kind of event.
+     * @return This receiver.
+     */
+    public GEventReceiver subscribeTo(final String kind) {
+        link.registerEventReceiver(this, kind);
+        return this;
+    }
+
+    /**
+     * Subscribes this receiver to the given group of kinds of events.
+     *
+     * @param kinds A group of kinds of events.
+     * @return This receiver.
+     */
+    public GEventReceiver subscribeTo(final Set<String> kinds) {
+        link.registerEventReceiver(this, kinds);
+        return this;
+    }
+
+    /**
+     * Unsubscribes this receiver from the given kind of event.
+     *
+     * @param kind Kind of event.
+     * @return This receiver.
+     */
+    public GEventReceiver unsubscribeFrom(final String kind) {
+        link.deregisterEventReceiver(this, kind);
+        return this;
+    }
+
+    /**
+     * Unsubscribes this receiver from the given group of kinds of events.
+     *
+     * @param kinds A group of kinds of events.
+     * @return This receiver.
+     */
+    public GEventReceiver unsubscribeFrom(final Set<String> kinds) {
+        link.deregisterEventReceiver(this, kinds);
+        return this;
+    }
+
+    /**
+     * Unsubscribes this receiver from all kinds of events.
+     *
+     * @return This receiver.
+     */
+    public GEventReceiver unsubscribeFromAll() {
+        link.deregisterEventReceiver(this);
+        return this;
     }
 
     /**
@@ -52,7 +110,7 @@ public final class GEventReceiver implements AutoCloseable {
      *
      * @param event Event to queue.
      */
-    public void addEvent(final GEvent event) {
+    public void postEvent(final GEvent event) {
         events.add(event);
         // We might have picked up the event already. So don't even bother if we are empty again.
         if (!events.isEmpty()) {
