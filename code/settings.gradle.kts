@@ -2,4 +2,4 @@
 // SPDX-License-Identifier: MIT-0
 
 rootProject.name = "glitchy-kit"
-include("gpx", "glib")
+include("glib")
