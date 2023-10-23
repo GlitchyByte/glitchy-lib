@@ -24,13 +24,13 @@ publishing {
         create<MavenPublication>("GLib") {
             from(components["java"])
             pom {
-                name.set("GLib")
-                description.set("Classes and utilities for general development.")
-                url.set("https://github.com/glitchybyte/glitchy-kit")
+                name = "GLib"
+                description = "Classes and utilities for general development."
+                url = "https://github.com/glitchybyte/glitchy-kit"
                 licenses {
                     license {
-                        name.set("Apache License, Version 2.0")
-                        url.set("https://opensource.org/licenses/Apache-2.0")
+                        name = "Apache License, Version 2.0"
+                        url = "https://opensource.org/licenses/Apache-2.0"
                     }
                 }
             }
@@ -48,4 +48,4 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.8.1-SNAPSHOT"
+version = File("../version").readLines().first().trim()

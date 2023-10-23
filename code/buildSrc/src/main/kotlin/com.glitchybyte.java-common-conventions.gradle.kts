@@ -23,7 +23,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -36,7 +36,7 @@ tasks.compileJava {
 }
 
 dependencies {
-    // JUnit dependencies for testing.
+    // JUnit for unit tests.
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
