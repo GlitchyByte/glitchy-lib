@@ -35,10 +35,15 @@ tasks.compileJava {
     }
 }
 
-testing {
-    suites.withType(JvmTestSuite::class) {
-        useJUnitJupiter("5.10.0")
-    }
+dependencies {
+    // JUnit dependencies for testing.
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Test>("test") {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
 }
 
 tasks.withType<Test>().configureEach {
