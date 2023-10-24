@@ -3,7 +3,7 @@ run-name: Publishing a snapshot of glib library
 on:
   workflow_dispatch:
 env:
-  GRADLE_JAVA_VERSION: 20
+  GRADLE_JAVA_VERSION: 17
   JAVA_VERSION: 21
   GRADLE_VERSION: 8.4
   PROJECT_NAME: glib
@@ -50,7 +50,6 @@ jobs:
       - name: Setup Java for Gradle
         uses: oracle-actions/setup-java@v1
         with:
-          website: jdk.java.net
           release: ${{ env.GRADLE_JAVA_VERSION }}
 
       - name: Setup Java
