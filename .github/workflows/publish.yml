@@ -2,18 +2,42 @@ name: glib-publisher
 run-name: Publishing glib library
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "code/glib/src/main/resources/version"
 env:
   GRADLE_JAVA_VERSION: 20
   JAVA_VERSION: 21
-  GRADLE_VERSION: 8.3
+  GRADLE_VERSION: 8.4
   PROJECT_NAME: glib
+  VERSION_FILE_PATH: ${{ github.workspace }}/version
 jobs:
-  all-in-one:
+  sanity_check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          version="v$(head -n 1 ${{ env.VERSION_FILE_PATH }})"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Stable test
+        working-directory: code
+        run: |
+          if [[ "${{ github.ref_name }}" != "main" ]]; then
+            echo "Stable releases are only allowed on main branch!"
+            exit 1
+          fi
+          if [[ "${{ steps.version.outputs.version }}" == *"-SNAPSHOT" ]]; then
+            echo "Only stable releases are allowed on main branch!"
+            exit 1
+          fi
+
+  stable_package:
+    needs: sanity_check
     permissions:
       packages: write # Packages.
       id-token: write # Pages.
@@ -21,16 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Snapshot test
-        working-directory: code
-        run: |
-          version=$(<"${{ env.PROJECT_NAME }}/src/main/resources/version")
-          if [[ "${version}" == *"-SNAPSHOT" ]]; then
-            echo "'main' doesn't release snapshots!"
-            exit 1
-          fi
+        uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Setup Java for Gradle
         uses: oracle-actions/setup-java@v1
@@ -92,3 +109,35 @@ jobs:
 
       - name: Deploy Pages
         uses: actions/deploy-pages@v2
+
+  create_release:
+    needs: [ sanity_check, stable_package ]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.sanity_check.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Delete version if it exists
+        run: gh release delete ${{ steps.version.outputs.version }} --cleanup-tag -y || true
+
+      - name: Delay between delete and create
+        run: sleep 2
+
+      - name: Create release
+        run: gh release create ${{ steps.version.outputs.version }} -t "${{ steps.version.outputs.version }}" -F release.md
+
+      - name: Keep 10 releases
+        run: |
+          releases=$(gh release list)
+          releaseCount=$(echo "$releases" | wc -l)
+          keep=10
+          if [ "$releaseCount" -gt "$keep" ]; then
+            extra=$((releaseCount - keep))
+            tags=$(echo "$releases" | tail -n $extra | cut -f3)
+            for tag in $tags; do
+              gh release delete ${tag} --cleanup-tag -y
+            done
+          fi
