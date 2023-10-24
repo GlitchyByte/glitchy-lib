@@ -4,8 +4,6 @@
 
 Included in this repository are libraries and utilities common to many of my projects.
 
-This is a way of keeping my dependencies updated in one place and working together. It would be a bit cumbersome to keep them each in its own repository, and in sync with each other.
-
 ---
 ## GLib Java library
 ![Version](https://img.shields.io/badge/Version-1.8.0-blue)
