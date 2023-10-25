@@ -22,6 +22,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.8.0")
+    implementation("com.glitchybyte.glib:glib:1.8.1")
 }
 ```
