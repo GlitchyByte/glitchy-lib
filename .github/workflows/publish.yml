@@ -128,7 +128,7 @@ jobs:
         run: sleep 2
 
       - name: Create release
-        run: gh release create ${{ steps.version.outputs.version }} -t "${{ steps.version.outputs.version }}" -F release.md
+        run: gh release create ${{ env.VERSION }} -t "${{ env.VERSION }}" -F release.md
 
       - name: Keep 10 releases
         run: |
