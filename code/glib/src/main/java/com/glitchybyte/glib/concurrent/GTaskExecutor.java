@@ -3,6 +3,7 @@
 
 package com.glitchybyte.glib.concurrent;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -10,7 +11,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @param <ES> An {@link ExecutorService} or descendant.
  */
-public sealed abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable
+public sealed abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable, Executor
         permits GTaskRunner, GTaskScheduler {
 
     /**
@@ -52,5 +53,11 @@ public sealed abstract class GTaskExecutor<ES extends ExecutorService> implement
             task.run();
             task.done();
         };
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public void execute(final Runnable command) {
+        runner.execute(command);
     }
 }
