@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Thread factory for {@link GTaskExecutor}.
+ * Thread factory for {@link GTaskExecutorService}.
  *
  * <p>Produces platform threads.
  */

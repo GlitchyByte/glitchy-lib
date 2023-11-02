@@ -4,7 +4,7 @@
 package com.glitchybyte.glib.concurrent.event;
 
 import com.glitchybyte.glib.concurrent.GLock;
-import com.glitchybyte.glib.concurrent.GTaskRunner;
+import com.glitchybyte.glib.concurrent.GTaskRunnerService;
 
 import java.util.Queue;
 import java.util.Set;
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  */
 public final class GEventReceiver implements AutoCloseable {
 
-    private final GTaskRunner runner = new GTaskRunner(1);
+    private final GTaskRunnerService runner = new GTaskRunnerService(1);
     private final GEventLink link;
     private final Consumer<GEvent> eventHandler;
     private boolean isClosed = false;

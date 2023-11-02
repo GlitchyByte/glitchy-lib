@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GTaskRunnerTest {
 
-    private GTaskRunner runner;
+    private GTaskRunnerService runner;
 
     @BeforeEach
     void setupRunner() {
-        runner = new GTaskRunner();
+        runner = new GTaskRunnerService();
     }
 
     @AfterEach

@@ -4,7 +4,6 @@
 package com.glitchybyte.glib.concurrent;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
@@ -19,27 +18,7 @@ import java.util.concurrent.*;
  * {@link Callable}s. This avoids having to create, or keep track of, a separate
  * {@link ExecutorService}. Keep in mind this class uses platform threads.
  */
-public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
-
-    /**
-     * Creates a task runner with an unbounded cached thread pool.
-     */
-    public GTaskRunner() {
-        super(Executors.newCachedThreadPool(new GThreadFactory()));
-    }
-
-    /**
-     * Creates a task runner with a fixed thread pool.
-     *
-     * @param threadCount Thread count for this runner.
-     */
-    public GTaskRunner(final Integer threadCount) {
-        super(switch (threadCount) {
-            case 1 -> Executors.newSingleThreadExecutor(new GThreadFactory());
-            case Integer x when x > 1 -> Executors.newFixedThreadPool(threadCount, new GThreadFactory());
-            case null, default -> throw new IllegalArgumentException("threadCount must be positive!");
-        });
-    }
+public interface GTaskRunner extends Executor {
 
     /**
      * Submits a {@link Runnable} to execute concurrently.
@@ -48,10 +27,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @return A {@link Future<Void>} representing pending completion of the task.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    @SuppressWarnings("unchecked")
-    public Future<Void> run(final Runnable runnable) throws RejectedExecutionException {
-        return (Future<Void>) runner.submit(runnable);
-    }
+    Future<Void> run(final Runnable runnable) throws RejectedExecutionException;
 
     /**
      * Submits a collection of {@link Runnable} to execute concurrently.
@@ -60,9 +36,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @return A list of {@link Future<Void>} representing pending completion of the tasks.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public List<Future<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException {
-        return runnables.stream().map(this::run).toList();
-    }
+    List<Future<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException;
 
     /**
      * Submits an array of {@link Runnable} to execute concurrently.
@@ -71,9 +45,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @return A list of {@link Future<Void>} representing pending completion of the tasks.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public List<Future<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException {
-        return runAll(Arrays.asList(runnables));
-    }
+    List<Future<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException;
 
     /**
      * Submits a {@link Callable} to execute concurrently.
@@ -83,9 +55,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException {
-        return runner.submit(callable);
-    }
+    <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException;
 
     /**
      * Submits a collection of {@link Callable} to execute concurrently.
@@ -95,9 +65,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If one of the tasks cannot be scheduled for execution.
      */
-    public <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException {
-        return callables.stream().map(this::call).toList();
-    }
+    <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException;
 
     /**
      * Submits an array of {@link Callable} to execute concurrently.
@@ -107,9 +75,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    public <V> List<Future<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException {
-        return callAll(Arrays.asList(callables));
-    }
+    <V> List<Future<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException;
 
     /**
      * Submits a task to execute concurrently.
@@ -127,13 +93,7 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @throws InterruptedException If the thread is interrupted while waiting for the task to start.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <T extends GTask> T start(final T task, final Duration timeout)
-            throws InterruptedException, RejectedExecutionException {
-        task.setTaskRunner(this);
-        runner.execute(createTaskWrapper(task));
-        task.awaitStarted(timeout);
-        return task;
-    }
+    <T extends GTask> T start(final T task, final Duration timeout) throws InterruptedException, RejectedExecutionException;
 
     /**
      * Submits a task to be run concurrently.
@@ -150,7 +110,5 @@ public final class GTaskRunner extends GTaskExecutor<ExecutorService> {
      * @throws InterruptedException If the thread is interrupted while waiting for the task to start.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    public <T extends GTask> T start(final T task) throws InterruptedException, RejectedExecutionException {
-        return start(task, Duration.ofSeconds(5));
-    }
+    <T extends GTask> T start(final T task) throws InterruptedException, RejectedExecutionException;
 }

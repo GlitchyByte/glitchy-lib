@@ -25,3 +25,7 @@ dependencies {
     implementation("com.glitchybyte.glib:glib:1.8.1")
 }
 ```
+
+Notable changes:
+
+* Separated interfaces from task runner services.

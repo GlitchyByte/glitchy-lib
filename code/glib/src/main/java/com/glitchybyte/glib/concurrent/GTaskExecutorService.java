@@ -11,8 +11,8 @@ import java.util.concurrent.ExecutorService;
  *
  * @param <ES> An {@link ExecutorService} or descendant.
  */
-public sealed abstract class GTaskExecutor<ES extends ExecutorService> implements AutoCloseable, Executor
-        permits GTaskRunner, GTaskScheduler {
+public sealed abstract class GTaskExecutorService<ES extends ExecutorService> implements Executor, AutoCloseable
+        permits GTaskRunnerService, GTaskSchedulerService {
 
     /**
      * Actual {@link ExecutorService} runner.
@@ -27,7 +27,7 @@ public sealed abstract class GTaskExecutor<ES extends ExecutorService> implement
      *
      * @param runner {@link ExecutorService} to use as runner.
      */
-    public GTaskExecutor(final ES runner) {
+    public GTaskExecutorService(final ES runner) {
         this.runner = runner;
     }
 
