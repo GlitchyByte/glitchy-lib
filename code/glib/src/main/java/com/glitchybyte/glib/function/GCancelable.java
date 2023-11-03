@@ -13,4 +13,9 @@ public interface GCancelable {
      * Cancels the task.
      */
     void cancel();
+
+    /**
+     * No-op cancelable.
+     */
+    GCancelable NOOP = () -> {};
 }
