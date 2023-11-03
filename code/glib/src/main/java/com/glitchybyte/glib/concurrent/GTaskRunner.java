@@ -24,58 +24,58 @@ public interface GTaskRunner extends Executor {
      * Submits a {@link Runnable} to execute concurrently.
      *
      * @param runnable A {@link Runnable} to execute.
-     * @return A {@link Future<Void>} representing pending completion of the task.
+     * @return A {@link CompletableFuture<Void>} representing pending completion of the task.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    Future<Void> run(final Runnable runnable) throws RejectedExecutionException;
+    CompletableFuture<Void> run(final Runnable runnable) throws RejectedExecutionException;
 
     /**
      * Submits a collection of {@link Runnable} to execute concurrently.
      *
      * @param runnables A collection of {@link Runnable} to execute.
-     * @return A list of {@link Future<Void>} representing pending completion of the tasks.
+     * @return A list of {@link CompletableFuture<Void>} representing pending completion of the tasks.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    List<Future<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException;
+    List<CompletableFuture<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException;
 
     /**
      * Submits an array of {@link Runnable} to execute concurrently.
      *
      * @param runnables An array of {@link Runnable} to execute.
-     * @return A list of {@link Future<Void>} representing pending completion of the tasks.
+     * @return A list of {@link CompletableFuture<Void>} representing pending completion of the tasks.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    List<Future<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException;
+    List<CompletableFuture<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException;
 
     /**
      * Submits a {@link Callable} to execute concurrently.
      *
      * @param callable A {@link Callable} to execute.
-     * @return A {@link Future} representing pending completion of the task.
+     * @return A {@link CompletableFuture} representing pending completion of the task.
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If the task cannot be scheduled for execution.
      */
-    <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException;
+    <V> CompletableFuture<V> call(final Callable<V> callable) throws RejectedExecutionException;
 
     /**
      * Submits a collection of {@link Callable} to execute concurrently.
      *
      * @param callables A collection of {@link Callable} to execute.
-     * @return A list of {@link Future} representing pending completion of the tasks.
+     * @return A list of {@link CompletableFuture} representing pending completion of the tasks.
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If one of the tasks cannot be scheduled for execution.
      */
-    <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException;
+    <V> List<CompletableFuture<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException;
 
     /**
      * Submits an array of {@link Callable} to execute concurrently.
      *
      * @param callables An array of {@link Callable} to execute.
-     * @return A list of {@link Future} representing pending completion of the tasks.
+     * @return A list of {@link CompletableFuture} representing pending completion of the tasks.
      * @param <V> Type of task result.
      * @throws RejectedExecutionException If one the tasks cannot be scheduled for execution.
      */
-    <V> List<Future<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException;
+    <V> List<CompletableFuture<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException;
 
     /**
      * Submits a task to execute concurrently.

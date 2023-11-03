@@ -13,14 +13,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GTaskRunnerTest {
+public class GTaskRunnerMultiTest {
 
     private GTaskRunnerService runner;
 
@@ -40,13 +41,16 @@ public class GTaskRunnerTest {
         final List<String> items = new LinkedList<>();
         final Lock itemsLock = new ReentrantLock();
         final Runnable task = () -> GLock.locked(itemsLock, () -> items.add("one"));
-        final Future<Void> future = runner.run(task);
+        final CompletableFuture<Void> future = runner.run(task);
+        final AtomicBoolean flip = new AtomicBoolean(false);
+        future.thenRun(() -> flip.set(true)).join();
         try {
             future.get();
         } catch (final InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
         assertTrue(items.contains("one"));
+        assertTrue(flip::get);
     }
 
     @Test
@@ -58,7 +62,7 @@ public class GTaskRunnerTest {
                 () -> GLock.locked(itemsLock, () -> items.add("two")),
                 () -> GLock.locked(itemsLock, () -> items.add("three"))
         );
-        final List<Future<Void>> futures = runner.runAll(tasks);
+        final List<CompletableFuture<Void>> futures = runner.runAll(tasks);
         futures.forEach(future -> {
             try {
                 future.get();
@@ -80,7 +84,7 @@ public class GTaskRunnerTest {
                 () -> GLock.locked(itemsLock, () -> items.add("two")),
                 () -> GLock.locked(itemsLock, () -> items.add("three"))
         };
-        final List<Future<Void>> futures = runner.runAll(tasks);
+        final List<CompletableFuture<Void>> futures = runner.runAll(tasks);
         futures.forEach(future -> {
             try {
                 future.get();
@@ -96,7 +100,9 @@ public class GTaskRunnerTest {
     @Test
     void canCall() {
         final Callable<String> task = () -> "one";
-        final Future<String> future = runner.call(task);
+        final CompletableFuture<String> future = runner.call(task);
+        final AtomicBoolean flip = new AtomicBoolean(false);
+        future.thenRun(() -> flip.set(true)).join();
         final String item;
         try {
             item = future.get();
@@ -104,6 +110,7 @@ public class GTaskRunnerTest {
             throw new RuntimeException(e);
         }
         assertEquals("one", item);
+        assertTrue(flip::get);
     }
 
     @Test
@@ -113,7 +120,7 @@ public class GTaskRunnerTest {
                 () -> "two",
                 () -> "three"
         );
-        final List<Future<String>> futures = runner.callAll(tasks);
+        final List<CompletableFuture<String>> futures = runner.callAll(tasks);
         final List<String> items = new ArrayList<>();
         final Lock itemsLock = new ReentrantLock();
         futures.forEach(future -> {
@@ -137,7 +144,7 @@ public class GTaskRunnerTest {
                 () -> "two",
                 () -> "three"
         };
-        final List<Future<String>> futures = runner.callAll(tasks);
+        final List<CompletableFuture<String>> futures = runner.callAll(tasks);
         final List<String> items = new ArrayList<>();
         final Lock itemsLock = new ReentrantLock();
         futures.forEach(future -> {

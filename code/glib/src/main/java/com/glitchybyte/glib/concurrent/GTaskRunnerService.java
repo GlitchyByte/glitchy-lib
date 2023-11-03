@@ -43,32 +43,46 @@ public final class GTaskRunnerService extends GTaskExecutorService<ExecutorServi
 
     @Override
     @SuppressWarnings("unchecked")
-    public Future<Void> run(final Runnable runnable) throws RejectedExecutionException {
-        return (Future<Void>) runner.submit(runnable);
+    public CompletableFuture<Void> run(final Runnable runnable) throws RejectedExecutionException {
+        final Future<Void> future = (Future<Void>) runner.submit(runnable);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return future.get();
+            } catch (final InterruptedException |  ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }, runner);
     }
 
     @Override
-    public List<Future<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException {
+    public List<CompletableFuture<Void>> runAll(final Collection<Runnable> runnables) throws RejectedExecutionException {
         return runnables.stream().map(this::run).toList();
     }
 
     @Override
-    public List<Future<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException {
+    public List<CompletableFuture<Void>> runAll(final Runnable[] runnables) throws RejectedExecutionException {
         return runAll(Arrays.asList(runnables));
     }
 
     @Override
-    public <V> Future<V> call(final Callable<V> callable) throws RejectedExecutionException {
-        return runner.submit(callable);
+    public <V> CompletableFuture<V> call(final Callable<V> callable) throws RejectedExecutionException {
+        final Future<V> future = runner.submit(callable);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return future.get();
+            } catch (final InterruptedException |  ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }, runner);
     }
 
     @Override
-    public <V> List<Future<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException {
+    public <V> List<CompletableFuture<V>> callAll(final Collection<Callable<V>> callables) throws RejectedExecutionException {
         return callables.stream().map(this::call).toList();
     }
 
     @Override
-    public <V> List<Future<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException {
+    public <V> List<CompletableFuture<V>> callAll(final Callable<V>[] callables) throws RejectedExecutionException {
         return callAll(Arrays.asList(callables));
     }
 
