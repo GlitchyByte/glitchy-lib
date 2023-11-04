@@ -22,8 +22,8 @@ import java.util.function.Consumer;
  */
 public final class GEventLink implements GEventSender {
 
-    private final Map<String, Set<GEventReceiver>> kindRegistry = new HashMap<>();
-    private final ReadWriteLock kindRegistryLock = new ReentrantReadWriteLock();
+    private final Map<String, Set<GEventReceiver>> eventTypeRegistry = new HashMap<>();
+    private final ReadWriteLock eventTypeRegistryLock = new ReentrantReadWriteLock();
 
     /**
      * Creates an event link.
@@ -43,69 +43,69 @@ public final class GEventLink implements GEventSender {
     }
 
     /**
-     * Registers a receiver to the given kind.
+     * Registers a receiver to the given event type.
      *
      * @param receiver Event receiver.
-     * @param kind Kind of event for which to register receiver.
+     * @param eventType Event type for which to register receiver.
      */
-    void registerEventReceiver(final GEventReceiver receiver, final String kind) {
-        kindRegistryLock.writeLock().lock();
+    void registerEventReceiver(final GEventReceiver receiver, final String eventType) {
+        eventTypeRegistryLock.writeLock().lock();
         try {
-            final Set<GEventReceiver> receivers = kindRegistry.computeIfAbsent(kind, k -> new HashSet<>());
+            final Set<GEventReceiver> receivers = eventTypeRegistry.computeIfAbsent(eventType, t -> new HashSet<>());
             receivers.add(receiver);
         } finally {
-            kindRegistryLock.writeLock().unlock();
+            eventTypeRegistryLock.writeLock().unlock();
         }
     }
 
     /**
-     * De-registers a receiver from the given kind.
+     * De-registers a receiver from the given event type.
      *
      * @param receiver Event receiver.
-     * @param kind Kind of event for which to de-register receiver.
+     * @param eventType Event type for which to de-register receiver.
      */
-    void deregisterEventReceiver(final GEventReceiver receiver, final String kind) {
-        kindRegistryLock.writeLock().lock();
+    void deregisterEventReceiver(final GEventReceiver receiver, final String eventType) {
+        eventTypeRegistryLock.writeLock().lock();
         try {
-            final Set<GEventReceiver> kindReceivers = kindRegistry.get(kind);
-            if (kindReceivers == null) {
+            final Set<GEventReceiver> receivers = eventTypeRegistry.get(eventType);
+            if (receivers == null) {
                 return;
             }
-            kindReceivers.remove(receiver);
-            if (kindReceivers.isEmpty()) {
-                kindRegistry.remove(kind);
+            receivers.remove(receiver);
+            if (receivers.isEmpty()) {
+                eventTypeRegistry.remove(eventType);
             }
         } finally {
-            kindRegistryLock.writeLock().unlock();
+            eventTypeRegistryLock.writeLock().unlock();
         }
     }
 
     /**
-     * De-registers a receiver from all kinds.
+     * De-registers a receiver from all event types.
      *
      * @param receiver Event receiver.
      */
     void deregisterEventReceiver(final GEventReceiver receiver) {
-        kindRegistryLock.writeLock().lock();
+        eventTypeRegistryLock.writeLock().lock();
         try {
-            for (final var iterator = kindRegistry.entrySet().iterator(); iterator.hasNext();) {
+            for (final var iterator = eventTypeRegistry.entrySet().iterator(); iterator.hasNext();) {
                 final var entry = iterator.next();
-                final Set<GEventReceiver> kindReceivers = entry.getValue();
-                kindReceivers.remove(receiver);
-                if (kindReceivers.isEmpty()) {
+                final Set<GEventReceiver> receivers = entry.getValue();
+                receivers.remove(receiver);
+                if (receivers.isEmpty()) {
                     iterator.remove();
                 }
             }
         } finally {
-            kindRegistryLock.writeLock().unlock();
+            eventTypeRegistryLock.writeLock().unlock();
         }
     }
 
     @Override
     public void send(final GEvent event) {
-        kindRegistryLock.readLock().lock();
+        eventTypeRegistryLock.readLock().lock();
         try {
-            final Set<GEventReceiver> receivers = kindRegistry.get(event.kind);
+            final Set<GEventReceiver> receivers = eventTypeRegistry.get(event.type);
             if (receivers == null) {
                 return;
             }
@@ -113,17 +113,17 @@ public final class GEventLink implements GEventSender {
                 receiver.postEvent(event);
             }
         } finally {
-            kindRegistryLock.readLock().unlock();
+            eventTypeRegistryLock.readLock().unlock();
         }
     }
 
     @Override
-    public void send(final String kind, final Object data) {
-        send(new GEvent(kind, data));
+    public void send(final String eventType, final Object data) {
+        send(new GEvent(eventType, data));
     }
 
     @Override
-    public void send(final String kind) {
-        send(kind, null);
+    public void send(final String eventType) {
+        send(eventType, null);
     }
 }

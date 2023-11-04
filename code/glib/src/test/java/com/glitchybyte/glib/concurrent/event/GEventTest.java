@@ -27,7 +27,7 @@ public class GEventTest {
         final GEventReceiver receiver = link.createEventReceiver(e -> {
             lock.lock();
             try {
-                gotEvent.set(e.kind.equals(testEventKind) && (e.getDataAsInt() == 42));
+                gotEvent.set(e.type.equals(testEventKind) && (e.getDataAsInt() == 42));
                 eventProcessed.signalAll();
             } finally {
                 lock.unlock();
@@ -56,7 +56,7 @@ public class GEventTest {
         final GEventReceiver receiver = link.createEventReceiver(e -> {
             lock.lock();
             try {
-                gotEvent.set(e.kind.equals(testEventKind) && (e.getDataAsInt() == 42));
+                gotEvent.set(e.type.equals(testEventKind) && (e.getDataAsInt() == 42));
                 eventProcessed.signalAll();
             } finally {
                 lock.unlock();
@@ -86,7 +86,7 @@ public class GEventTest {
         final GEventReceiver receiver = link.createEventReceiver(e -> {
             lock.lock();
             try {
-                gotEvent.set(e.kind.equals(testEventKind) && (e.getDataAsInt() == 42));
+                gotEvent.set(e.type.equals(testEventKind) && (e.getDataAsInt() == 42));
                 eventProcessed.signalAll();
             } finally {
                 lock.unlock();

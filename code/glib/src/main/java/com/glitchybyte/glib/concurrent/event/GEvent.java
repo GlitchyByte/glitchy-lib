@@ -11,9 +11,9 @@ import com.glitchybyte.glib.GObjects;
 public final class GEvent {
 
     /**
-     * Event kind.
+     * Event type.
      */
-    public final String kind;
+    public final String type;
 
     /**
      * Event data.
@@ -23,11 +23,11 @@ public final class GEvent {
     /**
      * Creates an event.
      *
-     * @param kind Event kind.
+     * @param type Event type.
      * @param data Event data.
      */
-    public GEvent(final String kind, final Object data) {
-        this.kind = kind;
+    public GEvent(final String type, final Object data) {
+        this.type = type;
         this.data = data;
     }
 

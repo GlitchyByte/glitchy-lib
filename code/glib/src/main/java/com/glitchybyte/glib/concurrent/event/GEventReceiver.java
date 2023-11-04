@@ -85,51 +85,51 @@ public final class GEventReceiver implements AutoCloseable {
     }
 
     /**
-     * Subscribes this receiver to the given kind of event.
+     * Subscribes this receiver to the given event type.
      *
-     * @param kind Kind of event.
+     * @param eventType Event type.
      * @return This receiver.
      */
-    public GEventReceiver subscribeTo(final String kind) {
-        link.registerEventReceiver(this, kind);
+    public GEventReceiver subscribeTo(final String eventType) {
+        link.registerEventReceiver(this, eventType);
         return this;
     }
 
     /**
-     * Subscribes this receiver to the given group of kinds of events.
+     * Subscribes this receiver to the given group of event types.
      *
-     * @param kinds A group of kinds of events.
+     * @param eventTypes A group of event types.
      * @return This receiver.
      */
-    public GEventReceiver subscribeTo(final Set<String> kinds) {
-        kinds.forEach(this::subscribeTo);
+    public GEventReceiver subscribeTo(final Set<String> eventTypes) {
+        eventTypes.forEach(this::subscribeTo);
         return this;
     }
 
     /**
-     * Unsubscribes this receiver from the given kind of event.
+     * Unsubscribes this receiver from the given event type.
      *
-     * @param kind Kind of event.
+     * @param eventType Event type.
      * @return This receiver.
      */
-    public GEventReceiver unsubscribeFrom(final String kind) {
-        link.deregisterEventReceiver(this, kind);
+    public GEventReceiver unsubscribeFrom(final String eventType) {
+        link.deregisterEventReceiver(this, eventType);
         return this;
     }
 
     /**
-     * Unsubscribes this receiver from the given group of kinds of events.
+     * Unsubscribes this receiver from the given group of event types.
      *
-     * @param kinds A group of kinds of events.
+     * @param eventTypes A group of event types.
      * @return This receiver.
      */
-    public GEventReceiver unsubscribeFrom(final Set<String> kinds) {
-        kinds.forEach(this::unsubscribeFrom);
+    public GEventReceiver unsubscribeFrom(final Set<String> eventTypes) {
+        eventTypes.forEach(this::unsubscribeFrom);
         return this;
     }
 
     /**
-     * Unsubscribes this receiver from all kinds of events.
+     * Unsubscribes this receiver from all event types.
      *
      * @return This receiver.
      */
