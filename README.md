@@ -6,7 +6,7 @@ Included in this repository are libraries and utilities common to many of my pro
 
 ---
 ## GLib Java library
-![Version](https://img.shields.io/badge/Version-1.8.1-blue)
+![Version](https://img.shields.io/badge/Version-1.9.0-blue)
 
 Classes and utilities for general development.
 [Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.8.1")
+    implementation("com.glitchybyte.glib:glib:1.9.0")
 }
 ```
 

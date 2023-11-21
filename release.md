@@ -22,10 +22,11 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.8.1")
+    implementation("com.glitchybyte.glib:glib:1.9.0")
 }
 ```
 
 Notable changes:
 
 * Separated interfaces from task runner services.
+* `GTaskRunner` interface returns `CompletableFuture`.
