@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Copyright 2021-2023 GlitchyByte
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT-0
 
 # Builds glib.
 
 # [Setup]
-set -u
+set -u # Exit with an error if a variable is used without being set.
 # Capture caller directory and script directory.
-readonly calling_dir="$(pwd)"
+readonly calling_dir="${PWD}"
 readonly script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Go to script directory and load utilities.
 cd "${script_dir}"
