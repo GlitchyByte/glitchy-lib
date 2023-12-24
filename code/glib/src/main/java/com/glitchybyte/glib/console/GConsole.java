@@ -5,15 +5,12 @@ package com.glitchybyte.glib.console;
 
 import com.glitchybyte.glib.GStrings;
 
-import java.io.Console;
-import java.io.PrintWriter;
-
 /**
  * Helper class to print color text to console.
  * It assumes 256 colors (at least).
  * If there is no console, it will do nothing.
- *
- * <p>Example usage:
+ * <p>
+ * Example usage:
  * {@snippet :
  * GConsole.print("This is " + GConsole.coloredText("cyan", GConsole.COLOR_CYAN, null) + " text.\n");
  * GConsole.println("And this is %s text.", GConsole.coloredText("orange", GConsole.rgb(5, 2, 1), null));
@@ -22,9 +19,6 @@ import java.io.PrintWriter;
  * @see <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
  */
 public final class GConsole {
-
-    private static final Console console = System.console();
-    private static final PrintWriter writer = (console == null) ? null : console.writer();
 
     /**
      * Carriage return.
@@ -144,10 +138,7 @@ public final class GConsole {
      * @param args Arguments of format.
      */
     public static void print(final String format, final Object... args) {
-        if (writer == null) {
-            return;
-        }
-        writer.write(GStrings.format(format, args));
+        System.out.print(GStrings.format(format, args));
     }
 
     /**
@@ -331,10 +322,7 @@ public final class GConsole {
      * Flush when you want to make sure the user sees your print output.
      */
     public static void flush() {
-        if (writer == null) {
-            return;
-        }
-        writer.flush();
+        System.out.flush();
     }
 
     private GConsole() {
