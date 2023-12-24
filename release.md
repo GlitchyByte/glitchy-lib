@@ -29,3 +29,4 @@ dependencies {
 Notable changes:
 
 * Renamed `GConsole` to `GTerminal`.
+* Added `GPaths` for path related utilities.
