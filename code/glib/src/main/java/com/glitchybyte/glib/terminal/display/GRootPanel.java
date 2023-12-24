@@ -1,14 +1,14 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console.display;
+package com.glitchybyte.glib.terminal.display;
 
 import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.concurrent.workqueue.GAsyncWorkQueue;
-import com.glitchybyte.glib.console.GConsole;
+import com.glitchybyte.glib.terminal.GTerminal;
 
 /**
- * Console UI root panel that contains all other panels.
+ * Terminal UI root panel that contains all other panels.
  */
 public abstract class GRootPanel extends GPanel {
 
@@ -35,8 +35,8 @@ public abstract class GRootPanel extends GPanel {
         super(0, 0, 0, width, height);
         rootPanel = this;
         // Prepare drawing area.
-        GConsole.print(GStrings.NEW_LINE.repeat(height));
-        GConsole.flush();
+        GTerminal.print(GStrings.NEW_LINE.repeat(height));
+        GTerminal.flush();
     }
 
     /**
@@ -68,11 +68,11 @@ public abstract class GRootPanel extends GPanel {
      * Draws the whole UI, all panels.
      */
     public void draw() {
-        GConsole.print(GConsole.cursorUp(height));
+        GTerminal.print(GTerminal.cursorUp(height));
         drawPanel();
-        GConsole.print(GConsole.cursorDown(height));
-        GConsole.print(GConsole.CC_CR);
-        GConsole.print(GConsole.resetColor());
-        GConsole.flush();
+        GTerminal.print(GTerminal.cursorDown(height));
+        GTerminal.print(GTerminal.CC_CR);
+        GTerminal.print(GTerminal.resetColor());
+        GTerminal.flush();
     }
 }

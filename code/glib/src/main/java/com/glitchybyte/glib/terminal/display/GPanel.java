@@ -1,16 +1,16 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console.display;
+package com.glitchybyte.glib.terminal.display;
 
-import com.glitchybyte.glib.console.GConsole;
+import com.glitchybyte.glib.terminal.GTerminal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * Console UI panel.
+ * Terminal UI panel.
  */
 public abstract class GPanel {
 
@@ -49,7 +49,7 @@ public abstract class GPanel {
     private String imprint = "";
 
     /**
-     * Creates a console panel.
+     * Creates a terminal panel.
      *
      * @param zOrder Panel Z position. Lower number gets drawn first.
      * @param x X position.
@@ -109,7 +109,7 @@ public abstract class GPanel {
      * @return A {@code String} to move the cursor to the X offset.
      */
     protected String moveToXOffset() {
-        return com.glitchybyte.glib.console.GConsole.CC_CR + com.glitchybyte.glib.console.GConsole.cursorRight(getXOffset());
+        return GTerminal.CC_CR + GTerminal.cursorRight(getXOffset());
     }
 
     /**
@@ -149,10 +149,10 @@ public abstract class GPanel {
      */
     protected void drawPanel() {
         final int yOffset = getYOffset();
-        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.resetColor());
-        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.cursorDown(yOffset));
-        com.glitchybyte.glib.console.GConsole.print(imprint);
-        com.glitchybyte.glib.console.GConsole.print(com.glitchybyte.glib.console.GConsole.cursorUp(yOffset));
+        GTerminal.print(GTerminal.resetColor());
+        GTerminal.print(GTerminal.cursorDown(yOffset));
+        GTerminal.print(imprint);
+        GTerminal.print(GTerminal.cursorUp(yOffset));
         panels.forEach(GPanel::drawPanel);
     }
 
@@ -168,17 +168,17 @@ public abstract class GPanel {
         final String ch = Character.toString(glyph);
         final StringBuilder sb = new StringBuilder();
         if (fgColor != null) {
-            sb.append(com.glitchybyte.glib.console.GConsole.foregroundColor(fgColor));
+            sb.append(GTerminal.foregroundColor(fgColor));
         }
         if (bgColor != null) {
-            sb.append(com.glitchybyte.glib.console.GConsole.backgroundColor(bgColor));
+            sb.append(GTerminal.backgroundColor(bgColor));
         }
         for (int i = 0; i < height; ++i) {
             sb.append(moveToXOffset());
             sb.append(ch.repeat(width));
-            sb.append(com.glitchybyte.glib.console.GConsole.cursorDown(1));
+            sb.append(GTerminal.cursorDown(1));
         }
-        sb.append(GConsole.cursorUp(height));
+        sb.append(GTerminal.cursorUp(height));
         return sb.toString();
     }
 

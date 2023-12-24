@@ -1,7 +1,7 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console.display;
+package com.glitchybyte.glib.terminal.display;
 
 import com.glitchybyte.glib.GObjects;
 import com.glitchybyte.glib.concurrent.GTask;

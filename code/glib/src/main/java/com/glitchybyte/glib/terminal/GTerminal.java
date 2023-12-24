@@ -1,7 +1,7 @@
 // Copyright 2020-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console;
+package com.glitchybyte.glib.terminal;
 
 import com.glitchybyte.glib.GStrings;
 
@@ -12,13 +12,13 @@ import com.glitchybyte.glib.GStrings;
  * <p>
  * Example usage:
  * {@snippet :
- * GConsole.print("This is " + GConsole.coloredText("cyan", GConsole.COLOR_CYAN, null) + " text.\n");
- * GConsole.println("And this is %s text.", GConsole.coloredText("orange", GConsole.rgb(5, 2, 1), null));
- * GConsole.flush();
- * }
+ * GTerminal.print("This is " + GTerminal.coloredText("cyan", GTerminal.COLOR_CYAN, null) + " text.\n");
+ * GTerminal.println("And this is %s text.", GTerminal.coloredText("orange", GTerminal.rgb(5, 2, 1), null));
+ * GTerminal.flush();
+ *}
  * @see <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
  */
-public final class GConsole {
+public final class GTerminal {
 
     /**
      * Carriage return.
@@ -325,7 +325,7 @@ public final class GConsole {
         System.out.flush();
     }
 
-    private GConsole() {
+    private GTerminal() {
         // Hiding constructor.
     }
 }

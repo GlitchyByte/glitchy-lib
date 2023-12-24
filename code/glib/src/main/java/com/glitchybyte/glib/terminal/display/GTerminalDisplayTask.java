@@ -1,24 +1,24 @@
 // Copyright 2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.glib.console.display;
+package com.glitchybyte.glib.terminal.display;
 
 import com.glitchybyte.glib.concurrent.GTask;
 
 /**
- * Convenience task to setup a console UI.
+ * Convenience task to set up a terminal UI.
  */
-public final class GConsoleDisplayTask extends GTask {
+public final class GTerminalDisplayTask extends GTask {
 
     private final GRootPanel rootPanel;
 
     /**
-     * Creates a console display task with the given root panel.
+     * Creates a terminal display task with the given root panel.
      *
      * @param rootPanel Root panel containing UI.
      */
-    public GConsoleDisplayTask(final GRootPanel rootPanel) {
-        super("console-display");
+    public GTerminalDisplayTask(final GRootPanel rootPanel) {
+        super("terminal-display");
         this.rootPanel = rootPanel;
     }
 

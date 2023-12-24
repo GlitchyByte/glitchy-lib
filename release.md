@@ -28,5 +28,4 @@ dependencies {
 
 Notable changes:
 
-* Separated interfaces from task runner services.
-* `GTaskRunner` interface returns `CompletableFuture`.
+* Renamed `GConsole` to `GTerminal`.
