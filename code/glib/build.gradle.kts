@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 plugins {
-    id("com.glitchybyte.java-library-published-conventions")
+    id("glitchybyte.java-library-published-conventions")
 }
 
 publishing {
