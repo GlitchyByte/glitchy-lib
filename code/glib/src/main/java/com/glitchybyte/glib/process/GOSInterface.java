@@ -1,15 +1,18 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.process;
 
+import com.glitchybyte.glib.GStrings;
 import sun.misc.Signal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Singleton instance of an OS interface. The instance will be applicable to the currently running OS.
@@ -54,15 +57,6 @@ public abstract class GOSInterface {
     }
 
     /**
-     * Resolves a directory, just like {@code Path} would, except it will resolve ~ to the user home directory on
-     * all platforms.
-     *
-     * @param dir Directory to convert to a {@code Path}.
-     * @return A path representing the directory.
-     */
-    public abstract Path resolvedDir(final String dir);
-
-    /**
      * Determines if the given exit code represents success.
      *
      * @param exitCode Exit code as returned by GProcess.
@@ -77,9 +71,49 @@ public abstract class GOSInterface {
      *
      * @param command Command string.
      * @return An array containing the command string.
+     * @throws IllegalArgumentException If command has mismatched quotes.
      */
     public String[] makeCommand(final String command) {
-        return new String[] { command };
+        final List<String> parts = new ArrayList<>();
+        Set<Character> lookingFor = Set.of(' ', '"', '\'');
+        final int cmdLen = command.length();
+        int start = 0;
+        boolean inQuotes = false;
+        while (start < cmdLen) {
+            final int p = GStrings.indexOfAny(command, lookingFor, start);
+            if (p == -1) {
+                if (inQuotes) {
+                    throw new IllegalArgumentException("Mismatched quotes!");
+                }
+                final String part = command.substring(start);
+                if (!part.isBlank()) {
+                    parts.add(part);
+                }
+                break;
+            } else {
+                final char ch = command.charAt(p);
+                if (inQuotes) {
+                    final String part = command.substring(start, p);
+                    inQuotes = false;
+                    lookingFor = Set.of(' ', '"', '\'');
+                    parts.add(part);
+                } else {
+                    if ((ch == '"') || (ch == '\'')) {
+                        lookingFor = Set.of(ch);
+                        inQuotes = true;
+                        start = p + 1;
+                        continue;
+                    } else {
+                        final String part = command.substring(start, p);
+                        if (!part.isBlank()) {
+                            parts.add(part);
+                        }
+                    }
+                }
+            }
+            start = p + 1;
+        }
+        return parts.toArray(new String[0]);
     }
 
     /**

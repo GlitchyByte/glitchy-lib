@@ -1,12 +1,10 @@
-// Copyright 2022 GlitchyByte
+// Copyright 2022-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.process;
 
 import sun.misc.Signal;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.BiFunction;
 
 /**
@@ -19,17 +17,6 @@ public final class GOSWindows extends GOSInterface {
      */
     public GOSWindows() {
         super(GOSType.WINDOWS);
-    }
-
-    @Override
-    public Path resolvedDir(final String dir) {
-        if (dir.equals("~")) {
-            return Paths.get(System.getProperty("user.home")).resolve(dir.substring(1)).normalize();
-        }
-        if (dir.startsWith("~/") || dir.startsWith("~\\")) {
-            return Paths.get(System.getProperty("user.home")).resolve(dir.substring(2)).normalize();
-        }
-        return Paths.get(System.getProperty("user.dir")).resolve(dir).normalize();
     }
 
     @Override
