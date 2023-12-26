@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2023 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -6,6 +6,7 @@ package com.glitchybyte.glib;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -89,5 +90,19 @@ public class GStringsTest {
         assertEquals("1 GiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024));
         assertEquals("1 TiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024 * 1024));
         assertEquals("1 PiB", GStrings.bytesToGroupUnit(1024L * 1024 * 1024 * 1024 * 1024));
+    }
+
+    @Test
+    void findIndexOfCharacter() {
+        final String input = "Hello world!";
+        assertEquals(6, GStrings.indexOfAny(input, Set.of('x', 'w', '!')));
+        assertEquals(-1, GStrings.indexOfAny(input, Set.of('x', 'p', '?')));
+    }
+
+    @Test
+    void findIndexOfCharacterWithOffset() {
+        final String input = "Hello world!";
+        assertEquals(8, GStrings.indexOfAny(input, Set.of('r', 'w', '!'), 7));
+        assertEquals(-1, GStrings.indexOfAny(input, Set.of('x', 'w', '?'), 7));
     }
 }

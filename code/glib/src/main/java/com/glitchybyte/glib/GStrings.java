@@ -9,6 +9,7 @@ import java.text.Format;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -200,6 +201,39 @@ public final class GStrings {
             denomination = "PiB";
         }
         return GStrings.format("%s %s", GStrings.fromDouble(quantity), denomination);
+    }
+
+    /**
+     * Returns the index of the 1st character in the set found in the string.
+     *
+     * @param str Input string.
+     * @param characterSet Characters to find.
+     * @param offset Offset from the beginning of the string.
+     * @return The index of the 1st character in the set found in the string, or -1 of not found.
+     */
+    public static int indexOfAny(final String str, final Set<Character> characterSet, final int offset) {
+        int found = -1;
+        for (final char ch: characterSet) {
+            final int p = str.indexOf(ch, offset);
+            if (p == -1) {
+                continue;
+            }
+            if ((found == -1) || (p < found)) {
+                found = p;
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Returns the index of the 1st character in the set found in the string.
+     *
+     * @param str Input string.
+     * @param characterSet Characters to find.
+     * @return The index of the 1st character in the set found in the string, or -1 of not found.
+     */
+    public static int indexOfAny(final String str, final Set<Character> characterSet) {
+        return indexOfAny(str, characterSet, 0);
     }
 
     private GStrings() {
