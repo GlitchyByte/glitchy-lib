@@ -203,6 +203,29 @@ public abstract class GOSInterface {
     }
 
     /**
+     * Spawns and executes the given command and waits until it is done.
+     *
+     * @param command Command string.
+     * @param dir Starting directory. If null, it will inherit the current process current directory.
+     * @return A process result object with output and exit code.
+     */
+    public GProcessResult executeWithResult(final String[] command, final Path dir) {
+        final List<String> output = new ArrayList<>();
+        final Integer exitCode = execute(command, dir, output);
+        return new GProcessResult(output, exitCode);
+    }
+
+    /**
+     * Spawns and executes the given command and waits until it is done.
+     *
+     * @param command Command string.
+     * @return A process result object with output and exit code.
+     */
+    public GProcessResult executeWithResult(final String[] command) {
+        return executeWithResult(command, null);
+    }
+
+    /**
      * Returns the command array that will send the given signal to the pid.
      *
      * @param signal Signal to send.
