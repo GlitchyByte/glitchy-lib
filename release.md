@@ -30,4 +30,5 @@ Notable changes:
 
 * Renamed `GConsole` to `GTerminal`.
 * Added `GPaths` for path related utilities.
-* Added indexOfAny to `GStrings`.
+* Added `indexOfAny` to `GStrings`.
+* Added `GProcessResult` to `GOSInterface`.

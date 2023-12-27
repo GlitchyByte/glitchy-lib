@@ -1,12 +1,7 @@
-# Glitchy Kit
+# Glitchy-Lib Java library
 
-![Java](https://img.shields.io/badge/Java-21-orange)
-
-Included in this repository are libraries and utilities common to many of my projects.
-
----
-## GLib Java library
 ![Version](https://img.shields.io/badge/Version-1.9.0-blue)
+![Java](https://img.shields.io/badge/Java-21-orange)
 
 Classes and utilities for general development.
 [Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
