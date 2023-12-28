@@ -28,7 +28,7 @@ dependencies {
 
 Notable changes:
 
-* Renamed `GConsole` to `GTerminal`.
+* Renamed `GConsole` to `GTerminal`, and disabled colors when there is no terminal attached.
 * Added `GPaths` for path related utilities.
 * Added `indexOfAny` to `GStrings`.
 * Added `GProcessResult` to `GOSInterface`.

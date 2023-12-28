@@ -12,13 +12,18 @@ import com.glitchybyte.glib.GStrings;
  * <p>
  * Example usage:
  * {@snippet :
- * GTerminal.print("This is " + GTerminal.coloredText("cyan", GTerminal.COLOR_CYAN, null) + " text.\n");
- * GTerminal.println("And this is %s text.", GTerminal.coloredText("orange", GTerminal.rgb(5, 2, 1), null));
+ * GTerminal.print("This is " + GTerminal.text("cyan", GTerminal.COLOR_CYAN, null) + " text.\n");
+ * GTerminal.println("And this is %s text.", GTerminal.text("orange", GTerminal.rgb(5, 2, 1), null));
  * GTerminal.flush();
  *}
  * @see <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
  */
 public final class GTerminal {
+
+    /**
+     * Flag to check if we are running in a terminal.
+     */
+    public static boolean IN_TERMINAL = System.console() != null;
 
     /**
      * Carriage return.
@@ -132,7 +137,7 @@ public final class GTerminal {
     public static final Integer COLOR_BRIGHT_WHITE = 15;
 
     /**
-     * Prints to console.
+     * Prints to terminal.
      *
      * @param format Format of message to print.
      * @param args Arguments of format.
@@ -142,7 +147,7 @@ public final class GTerminal {
     }
 
     /**
-     * Prints to console, and adds a new line.
+     * Prints to terminal, and adds a new line.
      *
      * @param format Format of message to print.
      * @param args Arguments of format.
@@ -291,7 +296,10 @@ public final class GTerminal {
      * @param bgColor Background color code.
      * @return {@code String} with encoded command.
      */
-    public static String coloredText(final String text, final Integer fgColor, final Integer bgColor) {
+    public static String text(final String text, final Integer fgColor, final Integer bgColor) {
+        if (!IN_TERMINAL) {
+            return text;
+        }
         final StringBuilder sb = new StringBuilder(COLORED_TEXT_MIN_BUFFER_LENGTH + text.length());
         if (fgColor != null) {
             sb.append(foregroundColor(fgColor));
@@ -311,8 +319,8 @@ public final class GTerminal {
      * @param fgColor Foreground color code.
      * @return {@code String} with encoded command.
      */
-    public static String coloredText(final String text, final Integer fgColor) {
-        return coloredText(text, fgColor, null);
+    public static String text(final String text, final Integer fgColor) {
+        return text(text, fgColor, null);
     }
 
     /**
