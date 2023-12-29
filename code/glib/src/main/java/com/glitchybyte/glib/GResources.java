@@ -44,7 +44,7 @@ public final class GResources {
      */
     public static String getVersion(final Object context) {
         try {
-            return getResourceString(context, "version");
+            return getResourceString(context, "version").trim();
         } catch (final IOException e) {
             return null;
         }
