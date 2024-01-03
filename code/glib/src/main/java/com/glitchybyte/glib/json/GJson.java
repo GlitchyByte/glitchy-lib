@@ -1,4 +1,4 @@
-// Copyright 2015-2021 GlitchyByte
+// Copyright 2015-2024 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.json;
@@ -15,12 +15,48 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Json utilities.
+ * A wrapper around a Gson object that extends its capabilities.
+ * <p>
+ * Just like Gson, a GJson object is thread-safe.
  */
 public final class GJson {
 
-    private static final Gson gson = new Gson();
-    private static final Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+    private static final class DefaultInstanceHolder {
+        private static final GJson instance = new GJson(new Gson());
+    }
+
+    /**
+     * Returns a singleton default basic {@code GJson}.
+     *
+     * @return A singleton default basic {@code GJson}.
+     */
+    public static GJson defaultInstance() {
+        return DefaultInstanceHolder.instance;
+    }
+
+    private static final class PrettyInstanceHolder {
+        private static final GJson instance = new GJson(new GsonBuilder().setPrettyPrinting().create());
+    }
+
+    /**
+     * Returns a singleton {@code GJson} with pretty printing.
+     *
+     * @return A singleton {@code GJson} with pretty printing.
+     */
+    public static GJson prettyInstance() {
+        return PrettyInstanceHolder.instance;
+    }
+
+    private final Gson gson;
+
+    /**
+     * Creates a json helper wrapper around a {@code Gson} object.
+     *
+     * @param gson Actual Gson object doing json work.
+     */
+    public GJson(final Gson gson) {
+        this.gson = gson;
+    }
 
     /**
      * Create object from {@code String}.
@@ -30,7 +66,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromString(final String json, final Class<T> tClass) {
+    public <T> T fromString(final String json, final Class<T> tClass) {
         return gson.fromJson(json, tClass);
     }
 
@@ -42,7 +78,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromString(final String json, final Type type) {
+    public <T> T fromString(final String json, final Type type) {
         return gson.fromJson(json, type);
     }
 
@@ -54,7 +90,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromPath(final String path, final Class<T> tClass) {
+    public <T> T fromPath(final String path, final Class<T> tClass) {
         return fromPath(Paths.get(path), tClass);
     }
 
@@ -66,7 +102,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromPath(final String path, final Type type) {
+    public <T> T fromPath(final String path, final Type type) {
         return fromPath(Paths.get(path), type);
     }
 
@@ -78,7 +114,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromFile(final File file, final Class<T> tClass) {
+    public <T> T fromFile(final File file, final Class<T> tClass) {
         return fromPath(file.toPath(), tClass);
     }
 
@@ -90,7 +126,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromFile(final File file, final Type type) {
+    public <T> T fromFile(final File file, final Type type) {
         return fromPath(file.toPath(), type);
     }
 
@@ -102,7 +138,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromPath(final Path path, final Class<T> tClass) {
+    public <T> T fromPath(final Path path, final Class<T> tClass) {
         try (final Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             return fromReader(reader, tClass);
         } catch (final IOException e) {
@@ -119,7 +155,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromPath(final Path path, final Type type) {
+    public <T> T fromPath(final Path path, final Type type) {
         try (final Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             return fromReader(reader, type);
         } catch (final IOException e) {
@@ -136,7 +172,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromInputStream(final InputStream stream, final Class<T> tClass) {
+    public <T> T fromInputStream(final InputStream stream, final Class<T> tClass) {
         final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
         try (final BufferedReader bufferedReader = new BufferedReader(reader)) {
             return fromReader(bufferedReader, tClass);
@@ -154,7 +190,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromInputStream(final InputStream stream, final Type type) {
+    public <T> T fromInputStream(final InputStream stream, final Type type) {
         final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
         try (final BufferedReader bufferedReader = new BufferedReader(reader)) {
             return fromReader(bufferedReader, type);
@@ -172,7 +208,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromReader(final Reader reader, final Class<T> tClass) {
+    public <T> T fromReader(final Reader reader, final Class<T> tClass) {
         return gson.fromJson(reader, tClass);
     }
 
@@ -184,7 +220,7 @@ public final class GJson {
      * @param <T> Type of desired object.
      * @return Object populated from json.
      */
-    public static <T> T fromReader(final Reader reader, final Type type) {
+    public <T> T fromReader(final Reader reader, final Type type) {
         return gson.fromJson(reader, type);
     }
 
@@ -192,11 +228,10 @@ public final class GJson {
      * Return object as json {@code String}.
      *
      * @param object Object to convert to json.
-     * @param pretty True, if it should write with pretty printing.
      * @return Json string.
      */
-    public static String toString(final Object object, final boolean pretty) {
-        return pretty ? prettyGson.toJson(object) : gson.toJson(object);
+    public String toString(final Object object) {
+        return gson.toJson(object);
     }
 
     /**
@@ -204,10 +239,9 @@ public final class GJson {
      *
      * @param object Object to convert to json and write.
      * @param path String representation of the path to write json to.
-     * @param pretty True, if it should write with pretty printing.
      */
-    public static void toPath(final Object object, final String path, final boolean pretty) {
-        toPath(object, Paths.get(path), pretty);
+    public void toPath(final Object object, final String path) {
+        toPath(object, Path.of(path));
     }
 
     /**
@@ -215,10 +249,9 @@ public final class GJson {
      *
      * @param object Object to convert to json and write.
      * @param file File to write json to.
-     * @param pretty True, if it should write with pretty printing.
      */
-    public static void toFile(final Object object, final File file, final boolean pretty) {
-        toPath(object, file.toPath(), pretty);
+    public void toFile(final Object object, final File file) {
+        toPath(object, file.toPath());
     }
 
     /**
@@ -226,11 +259,10 @@ public final class GJson {
      *
      * @param object Object to convert to json and write.
      * @param path Path to write json to.
-     * @param pretty True, if it should write with pretty printing.
      */
-    public static void toPath(final Object object, final Path path, final boolean pretty) {
+    public void toPath(final Object object, final Path path) {
         try (final Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            toWriter(object, writer, pretty);
+            toWriter(object, writer);
         } catch (final IOException e) {
             GLog.warning(e);
         }
@@ -241,17 +273,8 @@ public final class GJson {
      *
      * @param object Object to convert to json and write.
      * @param writer Writer to write json to.
-     * @param pretty True, if it should write with pretty printing.
      */
-    public static void toWriter(final Object object, final Writer writer, final boolean pretty) {
-        if (pretty) {
-            prettyGson.toJson(object, writer);
-        } else {
-            gson.toJson(object, writer);
-        }
-    }
-
-    private GJson() {
-        // Hiding constructor.
+    public void toWriter(final Object object, final Writer writer) {
+        gson.toJson(object, writer);
     }
 }

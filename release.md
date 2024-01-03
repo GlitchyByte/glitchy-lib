@@ -32,3 +32,4 @@ Notable changes:
 * Added `GPaths` for path related utilities.
 * Added `indexOfAny` to `GStrings`.
 * Added `GProcessResult` to `GOSInterface`.
+* Changed `GJson` to be able to be instanced, while still providing default singletons for basic and pretty versions.

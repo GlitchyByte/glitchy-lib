@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2024 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.json;
@@ -33,7 +33,7 @@ public final class GJsonMapNavigator {
      * @return A populated GJsonMapNavigator.
      */
     public static GJsonMapNavigator fromInputStream(final InputStream stream) {
-        return new GJsonMapNavigator(GJson.fromInputStream(stream, MAP_TYPE));
+        return new GJsonMapNavigator(GJson.defaultInstance().fromInputStream(stream, MAP_TYPE));
     }
 
     /**
@@ -43,7 +43,7 @@ public final class GJsonMapNavigator {
      * @return A populated GJsonMapNavigator.
      */
     public static GJsonMapNavigator fromString(final String json) {
-        return new GJsonMapNavigator(GJson.fromString(json, MAP_TYPE));
+        return new GJsonMapNavigator(GJson.defaultInstance().fromString(json, MAP_TYPE));
     }
 
     private final Map<String, Object> map;
@@ -129,7 +129,7 @@ public final class GJsonMapNavigator {
     @Override
     public String toString() {
         return "GJsonMapNavigator{" +
-                GJson.toString(map, true) +
+                GJson.prettyInstance().toString(map) +
                 '}';
     }
 }
