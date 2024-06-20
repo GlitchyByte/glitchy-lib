@@ -1,4 +1,4 @@
-// Copyright 2020-2023 GlitchyByte
+// Copyright 2020-2024 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
 plugins {
@@ -43,7 +43,7 @@ signing {
 }
 
 dependencies {
-    api("com.google.code.gson:gson:2.10.1")
+    api("com.google.code.gson:gson:2.11.0")
 }
 
 // Setup build info.

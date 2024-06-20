@@ -1,6 +1,6 @@
 # Glitchy-Lib Java library
 
-![Version](https://img.shields.io/badge/Version-1.9.0-blue)
+![Version](https://img.shields.io/badge/Version-1.10.0-blue)
 ![Java](https://img.shields.io/badge/Java-21-orange)
 
 Classes and utilities for general development.
@@ -25,6 +25,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.9.0")
+    implementation("com.glitchybyte.glib:glib:1.10.0")
 }
 ```
