@@ -5,7 +5,7 @@ on:
 env:
   # GRADLE_JAVA_VERSION: 17
   JAVA_VERSION: 21
-  GRADLE_VERSION: 8.5
+  GRADLE_VERSION: 8.8
   PROJECT_NAME: glib
   VERSION_FILE_PATH: ${{ github.workspace }}/version
 jobs:
@@ -58,7 +58,7 @@ jobs:
           release: ${{ env.JAVA_VERSION }}
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
 
@@ -85,7 +85,7 @@ jobs:
             :${{ env.PROJECT_NAME }}:publish
 
       - name: Clean up old snapshots
-        uses: actions/delete-package-versions@v4
+        uses: actions/delete-package-versions@v5
         with:
           package-name: com.glitchybyte.glib.glib
           package-type: maven
