@@ -1,5 +1,5 @@
-// Copyright 2020-2023 GlitchyByte
+// Copyright 2020-2024 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
-rootProject.name = "glitchy-kit"
-include("glib")
+rootProject.name = "glitchy-lib"
+include("lib")

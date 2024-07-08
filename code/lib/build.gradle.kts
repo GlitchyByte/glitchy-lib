@@ -23,10 +23,11 @@ publishing {
     publications {
         create<MavenPublication>("GLib") {
             from(components["java"])
+            artifactId = "glib"
             pom {
                 name = "GLib"
                 description = "Classes and utilities for general development."
-                url = "https://github.com/glitchybyte/glitchy-kit"
+                url = "https://github.com/glitchybyte/glitchy-lib"
                 licenses {
                     license {
                         name = "Apache License, Version 2.0"
@@ -47,5 +48,5 @@ dependencies {
 }
 
 // Setup build info.
-group = "com.glitchybyte.glib"
+group = "com.glitchybyte"
 version = File("../version").readLines().first().trim()

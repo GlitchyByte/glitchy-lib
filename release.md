@@ -22,14 +22,10 @@ repositories {
 }
 
 dependencies {
-    implementation("com.glitchybyte.glib:glib:1.9.0")
+    implementation("com.glitchybyte:glib:1.10.1")
 }
 ```
 
 Notable changes:
 
-* Renamed `GConsole` to `GTerminal`, and disabled colors when there is no terminal attached.
-* Added `GPaths` for path related utilities.
-* Added `indexOfAny` to `GStrings`.
-* Added `GProcessResult` to `GOSInterface`.
-* Changed `GJson` to be able to be instanced, while still providing default singletons for basic and pretty versions.
+* Changed (shortened) maven address.

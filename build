@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2021-2023 GlitchyByte
+# Copyright 2021-2024 GlitchyByte
 # SPDX-License-Identifier: MIT-0
 
 # Builds glib.
@@ -14,7 +14,7 @@ cd "${script_dir}"
 . ./_gcolors
 
 # [Main]
-readonly project="glib"
+readonly project="lib"
 
 # Clean, build, and run tests.
 cd "${script_dir}/code"
