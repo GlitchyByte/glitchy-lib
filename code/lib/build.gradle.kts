@@ -10,7 +10,7 @@ publishing {
         maven {
             // GitHub repository.
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/GlitchyByte/glitchy-kit")
+            url = uri("https://maven.pkg.github.com/GlitchyByte/glitchy-lib")
             credentials {
                 username = project.findProperty("gpr.username") as String?
                 password = project.findProperty("gpr.token") as String?
