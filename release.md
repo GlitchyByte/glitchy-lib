@@ -1,7 +1,7 @@
 # glib
 
 Classes and utilities for general development.
-[Read the javadoc!](https://glitchybyte.github.io/glitchy-kit/)
+[Read the javadoc!](https://glitchybyte.github.io/glitchy-lib/)
 
 To use in your own projects, make sure you have the appropriate credentials in your `gradle.properties`, and add the repository and dependency like this (Gradle Kotlin):
 
