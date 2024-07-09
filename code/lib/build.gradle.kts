@@ -5,6 +5,10 @@ plugins {
     id("glitchybyte.java-library-published-conventions")
 }
 
+tasks.javadoc {
+    title = "GLib v$version API"
+}
+
 publishing {
     repositories {
         maven {
