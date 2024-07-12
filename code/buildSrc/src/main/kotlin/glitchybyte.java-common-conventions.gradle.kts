@@ -1,4 +1,4 @@
-// Copyright 2022-2023 GlitchyByte
+// Copyright 2022-2024 GlitchyByte
 // SPDX-License-Identifier: MIT-0
 
 plugins {
@@ -37,7 +37,7 @@ tasks.compileJava {
 
 dependencies {
     // JUnit for unit tests.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

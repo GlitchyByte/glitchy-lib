@@ -39,6 +39,7 @@ jobs:
   stable_package:
     needs: sanity_check
     permissions:
+      contents: read  # Repository.
       packages: write # Packages.
       id-token: write # Pages.
       pages: write    # Pages.
